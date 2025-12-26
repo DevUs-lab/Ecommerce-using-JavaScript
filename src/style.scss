@@ -1,0 +1,108 @@
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+
+.cartBtn:hover {
+    background: black;
+    color: white;
+    width: auto;
+}
+
+.navbar {
+    .navbar-brand .nav-link {
+        transition: all 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+        transition: all 0.3s ease;
+        background-color: black;
+        color: white;
+    }
+
+
+    .nav-link:hover {
+        background-color: black;
+        color: white;
+    }
+
+    .nav-link.active {
+        color: #0dcaf0;
+        /* Bootstrap light blue */
+        text-decoration: underline;
+        text-underline-offset: 6px;
+    }
+
+}
+
+main {
+    .hero {
+        position: relative; // ✅ MUST
+        background-image: linear-gradient(rgba(65, 175, 142, 0.5),
+                rgba(36, 59, 58, 0.5)),
+            url("./public/1.png");
+        background-size: cover;
+        background-position: center;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+
+        .row {
+            padding-bottom: 100px;
+        }
+
+        /* SVG Divider */
+        .custom-shape-divider-bottom-1766661423 {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .custom-shape-divider-bottom-1766661423 svg {
+            position: relative;
+            display: block;
+            width: calc(113% + 1.3px);
+            height: 104px;
+            transform: rotateY(180deg);
+        }
+
+        .custom-shape-divider-bottom-1766661423 .shape-fill {
+            fill: #FFFFFF;
+        }
+
+    }
+
+    .services-section {
+        background-color: #d9dadb;
+
+        .mt {
+            margin-top: 24px;
+        }
+
+        @media (max-width:991px) {
+            .mt {
+                border-bottom: 1px solid rgb(192, 190, 190);
+                padding-bottom: 40px;
+                // border-radius: 20px;
+                margin: 2px 0px;
+            }
+        }
+
+
+    }
+
+    footer {
+
+        ul,
+        li,
+        a {
+            text-decoration: none;
+            list-style: none;
+            color: white;
+            padding-left: 0;
+            opacity: 0.8;
+        }
+    }
+
+}
