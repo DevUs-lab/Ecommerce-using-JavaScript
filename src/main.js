@@ -1,4 +1,9 @@
+
+// import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "./style.scss";
+import product from './api/cardData.json'
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { showProductContainer } from "./homeProducts";
 
 const $ = document.querySelectorAll("#mainNav .nav-link");
 console.log('$', $)
@@ -15,3 +20,11 @@ window.addEventListener("load", () => {
 
 });
 
+
+const $$ = (select) => {
+    document.querySelector(select)
+}
+
+// console.log('product', product)
+
+showProductContainer(product)
