@@ -21,9 +21,8 @@ window.addEventListener("load", () => {
 });
 
 
-const $$ = (select) => {
-    document.querySelector(select)
-}
+const $$ = (select) => document.querySelector(select);
+
 
 // console.log('product', product)
 
