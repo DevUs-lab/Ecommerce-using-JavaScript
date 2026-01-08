@@ -1,0 +1,21 @@
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "./toast.scss";
+
+.container {
+    .row {
+        .col {
+            .card {
+
+                width: 90%;
+
+                @media (max-width:768px) {
+                    width: 70%;
+                }
+
+                @media (max-width:2562px) {
+                    width: 60%;
+                }
+            }
+        }
+    }
+}

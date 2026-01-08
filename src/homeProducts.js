@@ -1,12 +1,15 @@
 
 const $$ = (select) => document.querySelector(select);
+import { addToCart } from "./addToCart";
 
 
 console.log($$("#products"))
 
-const template = $$("#productTemplate")
-const card = $$("#products")
 export const showProductContainer = (products) => {
+    const template = document.querySelector("#productTemplate");
+    const card = document.querySelector("#products");
+
+    if (!template || !card) return;
 
     console.log('products', products)
 
@@ -45,6 +48,12 @@ export const showProductContainer = (products) => {
                 qtyEl.textContent = qty;
             }
         });
+
+        const addToCartBtn = clone.querySelector(".add-to-cart-btn");
+        addToCartBtn.addEventListener("click", () => {
+            addToCart(element, qty);
+        });
+
         card.appendChild(clone)
     });
 

@@ -22,10 +22,10 @@
 
         <ul class="navbar-nav d-flex flex-row ms-auto">
           <li class="nav-item me-3">
-            <a class="nav-link px-2 px-md-3" href="#">Login</a>
+            <a class="nav-link px-2 px-md-3" href="./login.html">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-2 px-md-3" href="#">Register</a>
+            <a class="nav-link px-2 px-md-3" href="./register.html">Register</a>
           </li>
         </ul>
 
@@ -43,21 +43,21 @@
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0" id="mainNav">
 
             <li class="nav-item text-dark">
-              <a class="nav-link px-3 active" data-link="home" href="#">Home</a>
+              <a class="nav-link px-3 active" data-link="home" href="./index.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link px-3" data-link="about" href="#">About</a>
+              <a class="nav-link px-3" data-link="about" href="./about.html">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link px-3" data-link="products" href="#">Products</a>
+              <a class="nav-link px-3" data-link="products" href="./products.html">Products</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link px-3" data-link="Contact" href="#">Contact</a>
+              <a class="nav-link px-3" data-link="Contact" href="./contact.html">Contact</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link btn cartBtn rounded-0 px-3 text-start text-lg-center" data-link="cart" href="#"><i
-                  class="fa-solid fa-cart-flatbed "></i>
-                <span id="count">0</span>
+              <a class="nav-link btn cartBtn rounded-0 px-3 text-start text-lg-center" id="cart-btn" data-link="cart"
+                href="javascript:void(0)"><i class="fa-solid fa-cart-flatbed "></i>
+                <sup class="text-danger fw-bold" id="count">0</sup>
               </a>
             </li>
           </ul>
@@ -260,7 +260,7 @@
               <button class="btn increment">+</button>
             </div>
 
-            <button class="btn btn-dark mt-auto add-to-cart">
+            <button class="btn btn-dark mt-auto add-to-cart add-to-cart-btn">
               Add to Cart
             </button>
 
@@ -354,6 +354,33 @@
     </footer>
 
   </main>
+
+  <!-- Cart Modal -->
+  <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cartModalLabel">Your Cart</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="cart-items-container" class="d-flex flex-column gap-3">
+            <!-- Cart Items will be injected here -->
+            <p class="text-center text-muted">Your cart is empty.</p>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <div>
+            <strong>Total: Rs <span id="cart-total">0</span></strong>
+          </div>
+          <div>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="src/add-to-cart.html" class="btn btn-primary">Checkout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> -->
   <script type="module" src="/src/main.js"></script>
