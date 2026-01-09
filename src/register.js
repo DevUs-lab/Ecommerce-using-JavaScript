@@ -1,5 +1,6 @@
 
 
+import { showNotification } from "./addToCart.js";
 import { auth } from "./firebase.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -41,10 +42,10 @@ form.addEventListener("submit", async (e) => {
         alert("Passwords do not match");
         return;
     }
+    const button = form.querySelector("button");
 
     try {
 
-        const button = form.querySelector("button");
         button.disabled = true;
         button.textContent = "Registering...";
 
@@ -53,12 +54,29 @@ form.addEventListener("submit", async (e) => {
 
         const user = userCredential.user;
         console.log('user', user);
-        alert('Registration successful. Redirecting to login...');
+        showNotification('Registration successful. Redirecting to login...');
         window.location.href = './login.html';
     } catch (error) {
         console.log('error', error)
-        // Show a clearer error message to the user
-        alert(error?.message || 'Registration failed. Please try again.');
+        console.log('error', error.message)
+        console.log('error', error.message.includes('already-in-use'))
+
+        if (error.message.includes('already-in-use')) {
+            showNotification('This email is already registered. Please use a different email or login.');
+        }
+        if (error.message.includes('invalid-email')) {
+            showNotification('The email address is not valid. Please enter a valid email.');
+        }
+        if (error.message.includes('network-request-failed')) {
+            // alert('Network error. Please check your internet connection and try again.');
+            showNotification('Network error. Please check your internet connection and try again.', 'error');
+        }
+        // alert(error?.message || 'Registration failed. Please try again.');
+        showNotification(error.message)
+
+        button.disabled = false;
+        button.textContent = "Register";
+
     }
 }
 )
