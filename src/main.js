@@ -4,7 +4,7 @@ import product from './api/cardData.json'
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { showProductContainer } from "./homeProducts";
 import { addToCart, setupCartModal, renderCartPage } from "./addToCart";
-
+import './firebase.js';
 const $ = document.querySelectorAll("#mainNav .nav-link");
 console.log('$', $)
 window.addEventListener("load", () => {

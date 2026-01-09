@@ -69,25 +69,26 @@
                 <div class="card mx-auto shadow border-0 rounded-0">
                     <h3 class="mb-0 mx-auto text-center bg-dark w-100 py-4 text-white">Create Account</h3>
 
-                    <form class="px-4 py-3 py-5">
+                    <form class="px-4 py-5">
 
                         <div>
                             <label for="name" class="mb-2 mt-3 fw-bold">Full Name</label>
-                            <input type="text" class="form-control rounded-0" placeholder="John Doe" name="name">
+                            <input type="text" class="form-control rounded-0" placeholder="Enter your Name" name="name">
                         </div>
 
                         <div>
                             <label for="email" class="mb-2 mt-3 fw-bold">Email</label>
-                            <input type="text" class="form-control rounded-0" placeholder="Email" name="email">
+                            <input type="text" class="form-control rounded-0" placeholder="Enter your Email"
+                                name="email">
                         </div>
                         <div>
                             <label for="password" class="mb-2 mt-3 fw-bold">Password</label>
-                            <input type="password" class="form-control rounded-0" placeholder="Password"
+                            <input type="password" class="form-control rounded-0" placeholder="Enter your Password"
                                 name="password">
                         </div>
                         <div>
                             <label for="confirm-password" class="mb-2 mt-3 fw-bold">Confirm Password</label>
-                            <input type="password" class="form-control rounded-0" placeholder="Confirm Password"
+                            <input type="password" class="form-control rounded-0" placeholder="Confirm your Password"
                                 name="confirm-password">
                         </div>
 
@@ -157,6 +158,10 @@
         const year = document.getElementById("year")
         if (year) year.innerHTML = new Date().getFullYear()
     </script>
+
+    <script type="module" src="./src/register.js"></script>
+
+
 </body>
 
 </html>

@@ -1,4 +1,6 @@
 
+import * as bootstrap from 'bootstrap';
+
 // Helper to get cart from local storage
 export const getCart = () => {
     return JSON.parse(localStorage.getItem('cart')) || [];
