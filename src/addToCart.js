@@ -68,6 +68,11 @@ export const renderCart = () => {
                 <h6 class="mb-0 text-truncate" style="max-width: 150px;">${item.name}</h6>
                 <small class="text-muted">Rs ${item.price} x ${item.quantity}</small>
             </div>
+            <div class="d-flex align-items-center border rounded">
+                    <button class="btn btn-sm btn-light px-2 page-decrement" data-index="${index}">-</button>
+                    <span class="px-2" style="min-width: 30px; text-align: center;">${item.quantity}</span>
+                    <button class="btn btn-sm btn-light px-2 page-increment" data-index="${index}">+</button>
+                 </div>
         </div>
         <div class="d-flex align-items-center gap-3">
              <span class="fw-bold">Rs ${itemTotal}</span>

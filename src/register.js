@@ -1,8 +1,9 @@
 
 
 import { showNotification } from "./main.js";
-import { auth } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 const form = document.querySelector("form");
 
@@ -10,6 +11,9 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = form.email.value;
+    const name = form.name.value;
+    const phone = form.phone.value;
+    const address = form.address.value;
     const password = form.password.value;
     const confirmPassword = form["confirm-password"].value;
 
@@ -53,6 +57,10 @@ form.addEventListener("submit", async (e) => {
 
 
         const user = userCredential.user;
+        await setDoc(doc(db, "users", user.uid), {
+            email, name, phone, address, role: "user",
+            createdAt: new Date()
+        })
         console.log('user', user);
         showNotification('Registration successful. Redirecting to login...');
         // Give the notification a short moment to appear before redirecting
