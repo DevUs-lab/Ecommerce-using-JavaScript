@@ -1,6 +1,6 @@
 
 
-import { showNotification } from "./addToCart.js";
+import { showNotification } from "./main.js";
 import { auth } from "./firebase.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -14,32 +14,32 @@ form.addEventListener("submit", async (e) => {
     const confirmPassword = form["confirm-password"].value;
 
     if (!email) {
-        alert("Email is required");
+        showNotification("Email is required");
         return;
     }
 
     if (!password) {
-        alert("Password is required");
+        showNotification("Password is required");
         return;
     }
 
     if (!confirmPassword) {
-        alert("Confirm Password is required");
+        showNotification("Confirm Password is required");
         return;
     }
 
     if (!email.includes("@")) {
-        alert("Enter a valid email");
+        showNotification("Enter a valid email");
         return;
     }
 
     if (password.length < 6) {
-        alert("Password must be at least 6 characters long");
+        showNotification("Password must be at least 6 characters long");
         return;
     }
 
     if (password !== confirmPassword) {
-        alert("Passwords do not match");
+        showNotification("Passwords do not match");
         return;
     }
     const button = form.querySelector("button");
@@ -55,24 +55,27 @@ form.addEventListener("submit", async (e) => {
         const user = userCredential.user;
         console.log('user', user);
         showNotification('Registration successful. Redirecting to login...');
-        window.location.href = './login.html';
+        // Give the notification a short moment to appear before redirecting
+        setTimeout(() => {
+            window.location.href = './login.html';
+        }, 1500);
     } catch (error) {
         console.log('error', error)
         console.log('error', error.message)
-        console.log('error', error.message.includes('already-in-use'))
 
-        if (error.message.includes('already-in-use')) {
-            showNotification('This email is already registered. Please use a different email or login.');
+        let message = error?.message || 'Registration failed. Please try again.';
+        const type = 'error';
+
+        if (message.includes('already-in-use')) {
+            message = 'This email is already registered. Please use a different email or login.';
+        } else if (message.includes('invalid-email')) {
+            message = 'The email address is not valid. Please enter a valid email.';
+        } else if (message.includes('network-request-failed')) {
+            message = 'Network error. Please check your internet connection and try again.';
         }
-        if (error.message.includes('invalid-email')) {
-            showNotification('The email address is not valid. Please enter a valid email.');
-        }
-        if (error.message.includes('network-request-failed')) {
-            // alert('Network error. Please check your internet connection and try again.');
-            showNotification('Network error. Please check your internet connection and try again.', 'error');
-        }
-        // alert(error?.message || 'Registration failed. Please try again.');
-        showNotification(error.message)
+
+        // Show a single consolidated notification for errors
+        showNotification(message, type);
 
         button.disabled = false;
         button.textContent = "Register";

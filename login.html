@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <header>
+    <!-- <header>
         <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-2">
             <div class="container d-flex justify-content-between">
                 <p class="mb-0 header-p text-light p-2">
@@ -61,41 +61,47 @@
                 </div>
             </div>
         </nav>
-    </header>
+    </header> -->
+    <main class="h-100 align-items-center mt-5 d-flex justify-content-center">
 
-    <div class="container py-5">
-        <div class="row">
-            <div class="col mx-auto ">
-                <div class="card mx-auto shadow border-0 rounded-0">
-                    <h3 class="mb-0 mx-auto text-center bg-dark w-100 py-4 text-white">Welcome Back!</h3>
+        <div class="container py-5">
+            <div class="row">
+                <div class="col mx-auto" style="max-width: 420px;">
+                    <div class="card mx-auto shadow border-0 rounded-0">
+                        <h3 class="mb-0 mx-auto text-center bg-dark w-100 py-4 position-absolute text-white">Welcome
+                            Back!</h3>
+                        <button class="btn btn-close position-relative text-white bg-danger rounded-0 right-0"><a
+                                href="./index.html"></a></button>
 
-                    <form class="px-4 py-3 py-5">
+                        <form class="px-4 py-5">
 
-                        <div>
-                            <label for="email" class="mb-2 mt-3 fw-bold">Email</label>
-                            <input type="text" class="form-control rounded-0" placeholder="Email" name="email">
-                        </div>
-                        <div>
-                            <label for="password" class="mb-2 mt-3 fw-bold">Password</label>
-                            <input type="password" class="form-control rounded-0" placeholder="Password"
-                                name="password">
-                        </div>
+                            <div>
+                                <label for="email" class="mb-2 mt-3 fw-bold">Email</label>
+                                <input type="text" class="form-control rounded-0" placeholder="Email" name="email">
+                            </div>
+                            <div>
+                                <label for="password" class="mb-2 mt-3 fw-bold">Password</label>
+                                <input type="password" class="form-control rounded-0" placeholder="Password"
+                                    name="password">
+                            </div>
 
-                        <div class="mt-4 mx-auto text-center">
-                            <button class="btn btn-dark w-50 rounded-0">Login</button>
-                        </div>
+                            <div class="mt-4 mx-auto text-center">
+                                <button class="btn btn-dark w-50 rounded-0">Login</button>
+                            </div>
 
-                        <p class="mt-4 mb-0 text-center">Don't have an Account? <a href="register.html"
-                                class="text-decoration-none">Register</a></p>
+                            <p class="mt-4 mb-0 text-center">Don't have an Account? <a href="register.html"
+                                    class="text-decoration-none">Register</a>
+                            </p>
 
-                    </form>
+                        </form>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <footer class="bg-dark">
+    <!-- <footer class="bg-dark">
         <div class="container py-5 ">
             <div class="row g-4 mt-0">
                 <div class="col-12 col-md-6 col-lg-3">
@@ -140,9 +146,9 @@
         <div class="bg-dark text-light text-center container-fluid opacity-25">
             <p class="mb-0 py-2">All Rights Reserved. <span id="year"></span></p>
         </div>
-    </footer>
+    </footer> -->
 
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/login.js"></script>
     <script>
         const year = document.getElementById("year")
         if (year) year.innerHTML = new Date().getFullYear()

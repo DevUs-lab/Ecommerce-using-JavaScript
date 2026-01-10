@@ -41,3 +41,13 @@
         opacity: 1;
     }
 }
+
+/* Error variant */
+.custom-toast.error {
+    border-left-color: #f5222d;
+
+    /* Ant Design error red */
+    i {
+        color: #f5222d;
+    }
+}
