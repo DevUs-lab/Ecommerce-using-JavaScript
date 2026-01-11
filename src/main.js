@@ -1,5 +1,18 @@
-// import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import "./style.scss";
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+// import "./app.css";
+// import "./style.scss";
+
+
+// admin sidebar toggle
+const sidebar = document.getElementById("sidebar");
+const toggleBtn = document.getElementById("toggleBtn");
+
+toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("-translate-x-full");
+});
+
+
+
 import product from './api/cardData.json'
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { showProductContainer } from "./homeProducts";
