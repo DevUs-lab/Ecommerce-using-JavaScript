@@ -1,40 +1,37 @@
-import {
-    Routes, Route, Link
-} from "react-router-dom"
-import Dashboard from "./Dashboard"
-import Users from "./Users"
-import Products from "./Products"
-import Settings from "./Settings"
+import { Link, Outlet } from "react-router-dom";
 
 export default function AppRouter() {
-
-
-
-
     return (
-        <>
-            <div className=".container">
-                <div className="row">
-                    <div className="col-3 col-md-4 d-flex bg-dark flex-column text-white">
+        <div className="container-fluid">
+            <div className="row min-vh-100">
 
-                        <h3 className="mt-5 text-center">Admin Panel</h3>
-                        <Link to="/admin" className="py-3 ms-4 text-decoration-none hover:dark">Dashboard</Link>
-                        <Link to="/admin/users" className="py-3 text-decoration-none ms-4 hover:dark">Users</Link>
-                        <Link to='/admin/products' className="py-3 text-decoration-none ms-4 hover:dark">Products</Link>
-                        <Link to="/admin/settings" className="py-3 text-decoration-none ms-4 hover:dark">Setting</Link>
+                {/* Sidebar */}
+                <div className="col-3 col-md-3 bg-dark text-white p-4">
+                    <h3 className="text-center mb-4">Admin Panel</h3>
 
-                    </div>
-                    <div className="col-9 col-md-8 p-4">
-                        <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/users" element={<Users />} />
-                            <Route path="/products" element={<Products />} />
-                            <Route path="/settings" element={<Settings />} />
-                        </Routes>
+                    <Link to="" className="d-block py-2 text-white text-decoration-none">
+                        Dashboard
+                    </Link>
 
-                    </div>
+                    <Link to="users" className="d-block py-2 text-white text-decoration-none">
+                        Users
+                    </Link>
+
+                    <Link to="products" className="d-block py-2 text-white text-decoration-none">
+                        Products
+                    </Link>
+
+                    <Link to="settings" className="d-block py-2 text-white text-decoration-none">
+                        Settings
+                    </Link>
                 </div>
+
+                {/* Content */}
+                <div className="col-9 col-md-9 p-4 bg-light">
+                    <Outlet />
+                </div>
+
             </div>
-        </>
-    )
+        </div>
+    );
 }
