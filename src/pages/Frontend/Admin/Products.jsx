@@ -1,6 +1,6 @@
 import { message } from 'antd'
-import { setDoc, doc } from "firebase/firestore";
-import React, { useRef, useState } from 'react'
+import { setDoc, doc, getDocs, collection, deleteDoc, updateDoc } from "firebase/firestore";
+import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
 
 const Products = () => {
@@ -13,8 +13,10 @@ const Products = () => {
     }
 
     const [loading, setLoading] = useState(false)
+    const [productsList, setProductsList] = useState([])
     const [products, setProducts] = useState(initialstate)
     const [image, setImage] = useState(null)
+    const [editId, setEditId] = useState(null);
 
     const handleChange = (e) => {
         setProducts({ ...products, [e.target.name]: e.target.value })
@@ -24,36 +26,55 @@ const Products = () => {
 
     const HandleSubmit = async (e) => {
         e.preventDefault()
-
-        if (!image) {
-            message.error("Please select an image")
-            return
-        }
+        setLoading(true)
 
         try {
-            setLoading(true)
 
-            const imageUrl = await uploadImageToCloudinary()
+            if (!editId) {
+                if (!image) {
+                    message.error("Please select an image")
+                    return
+                }
 
-            const date = new Date().getTime()
-            const id = `prod_${date}`
 
-            // Create document with specific id in the top-level `products` collection
-            await setDoc(doc(db, "products", id), {
-                productName: products.productName,
-                descriptions: products.descriptions,
-                sellPrice: Number(products.sellPrice),
-                delPrice: Number(products.delPrice),
-                stock: Number(products.stock),
-                imageUrl: imageUrl,
-                createdAt: new Date()
-            })
+                const { imageUrl, publicId } = await uploadImageToCloudinary()
 
-            message.success("Product added successfully")
-            setProducts(initialstate)
-            setImage(null)
-            fileRef.current.value = "";
+                const date = new Date().getTime()
+                const id = `prod_${date}`
 
+                // Create document with specific id in the top-level `products` collection
+                await setDoc(doc(db, "products", id), {
+                    productName: products.productName,
+                    descriptions: products.descriptions,
+                    sellPrice: Number(products.sellPrice),
+                    delPrice: Number(products.delPrice),
+                    stock: Number(products.stock),
+                    imageUrl,
+                    publicId,
+                    createdAt: new Date()
+                })
+
+
+                message.success("Product added successfully")
+                getProducts()
+
+                setProducts(initialstate)
+                setImage(null)
+                fileRef.current.value = "";
+
+            } else {
+
+                await updateDoc(doc(db, "products", editId), {
+                    productName: products.productName,
+                    descriptions: products.descriptions,
+                    sellPrice: Number(products.sellPrice),
+                    delPrice: Number(products.delPrice),
+                    stock: Number(products.stock),
+                    updatedAt: new Date()
+                });
+
+                message.success("Product updated");
+            }
         } catch (error) {
             console.log(error)
             message.error("Failed to add product")
@@ -77,9 +98,61 @@ const Products = () => {
         )
 
         const data = await res.json()
-        return data.secure_url
+        return {
+            imageUrl: data.secure_url,
+            publicId: data.public_id
+        }
     }
 
+
+
+    const getProducts = async () => {
+
+        setLoading(true)
+
+        try {
+            const productsSnapshot = await getDocs(collection(db, "products"))
+
+            const productsList = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+            setProductsList(productsList)
+            console.log('productsList', productsList)
+        } catch (error) {
+            console.log('error', error)
+            message.error("Failed to fetch products")
+
+        }
+        setLoading(false)
+    }
+
+    const handleDelete = async (item) => {
+        try {
+            await deleteDoc(doc(db, "products", item.id));
+
+            setProductsList(prev =>
+                prev.filter(product => product.id !== item.id)
+            );
+
+            message.success("Product deleted");
+        } catch (error) {
+            console.log(error);
+            message.error("Delete failed");
+        }
+    };
+
+
+    const handleEdit = (item) => {
+        setProducts({
+            productName: item.productName,
+            descriptions: item.descriptions,
+            sellPrice: item.sellPrice,
+            delPrice: item.delPrice,
+            stock: item.stock,
+        });
+
+        setEditId(item.id);
+    };
+
+    useEffect(() => { getProducts() }, [])
 
 
     return (
@@ -91,8 +164,14 @@ const Products = () => {
                     <form onSubmit={HandleSubmit}>
 
                         <div>
-                            <input ref={fileRef}
-                                type="file" className="form-control" onChange={(e) => setImage(e.target.files[0])} />
+                            {!editId && (
+                                <input
+                                    ref={fileRef}
+                                    type="file"
+                                    className="form-control"
+                                    onChange={(e) => setImage(e.target.files[0])}
+                                />
+                            )}
                         </div>
 
                         <div className='my-3'>
@@ -112,7 +191,8 @@ const Products = () => {
                         </div>
                         <div className='text-center'>
                             {
-                                loading ? <button className='btn btn-primary w-50 text-center' disabled>Adding...</button> : <button className='btn btn-primary w-50 text-center'>Add Product</button>
+                                editId ? loading ? <button className='btn btn-primary w-50 text-center' disabled>Updating...</button> : <button className='btn btn-primary w-50 text-center'>Update Product</button> :
+                                    loading ? <button className='btn btn-primary w-50 text-center' disabled>Adding...</button> : <button className='btn btn-primary w-50 text-center'>Add Product</button>
                             }
                         </div>
                     </form>
@@ -120,6 +200,27 @@ const Products = () => {
 
             </div>
 
+            <div className="row mt-5">
+                {loading && <p>Loading...</p>}
+
+                {productsList.map((item) => (
+                    <div className="col-md-4" key={item.id}>
+                        <div className="card">
+                            <img src={item.imageUrl} className="card-img-top" />
+                            <div className="card-body">
+                                <h5>{item.productName}</h5>
+                                <p>{item.descriptions}</p>
+                                <p>Price: {item.sellPrice} <span>del: {item.delPrice}</span></p>
+                                <p>Stock: {item.stock}</p>
+                            </div>
+                            <div className='text-center ms-auto'>
+                                <button className='btn btn-danger me-4' onClick={() => handleDelete(item)}>Delete</button>
+                                <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
         </div>
     )
