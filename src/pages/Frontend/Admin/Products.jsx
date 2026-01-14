@@ -1,7 +1,8 @@
 import { message } from 'antd'
-import { setDoc, doc, getDocs, collection, deleteDoc, updateDoc } from "firebase/firestore";
+import { setDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
+import { getProducts } from '../../../Context/loginContext';
 
 const Products = () => {
     const initialstate = {
@@ -56,7 +57,7 @@ const Products = () => {
 
 
                 message.success("Product added successfully")
-                getProducts()
+                fetchProducts()
 
                 setProducts(initialstate)
                 setImage(null)
@@ -106,16 +107,16 @@ const Products = () => {
 
 
 
-    const getProducts = async () => {
+    const fetchProducts = async () => {
 
         setLoading(true)
 
         try {
-            const productsSnapshot = await getDocs(collection(db, "products"))
+            const data = await getProducts()
 
-            const productsList = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-            setProductsList(productsList)
-            console.log('productsList', productsList)
+            // const productsList = data.map(doc => ({ id: doc.id, ...doc.data() }))
+            setProductsList(data)
+            console.log('productsList', data)
         } catch (error) {
             console.log('error', error)
             message.error("Failed to fetch products")
@@ -152,7 +153,7 @@ const Products = () => {
         setEditId(item.id);
     };
 
-    useEffect(() => { getProducts() }, [])
+    useEffect(() => { fetchProducts() }, [])
 
 
     return (
@@ -207,15 +208,17 @@ const Products = () => {
                     <div className="col-md-4" key={item.id}>
                         <div className="card">
                             <img src={item.imageUrl} className="card-img-top" />
-                            <div className="card-body">
-                                <h5>{item.productName}</h5>
-                                <p>{item.descriptions}</p>
-                                <p>Price: {item.sellPrice} <span>del: {item.delPrice}</span></p>
-                                <p>Stock: {item.stock}</p>
-                            </div>
-                            <div className='text-center ms-auto'>
-                                <button className='btn btn-danger me-4' onClick={() => handleDelete(item)}>Delete</button>
-                                <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
+                            <div className='py-4'>
+                                <div className="card-body">
+                                    <h5>{item.productName}</h5>
+                                    <p>{item.descriptions}</p>
+                                    <p>Price: {item.sellPrice} <span>del: {item.delPrice}</span></p>
+                                    <p>Stock: {item.stock}</p>
+                                </div>
+                                <div className='text-center ms-auto'>
+                                    <button className='btn btn-danger me-4' onClick={() => handleDelete(item)}>Delete</button>
+                                    <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
+                                </div>
                             </div>
                         </div>
                     </div>
