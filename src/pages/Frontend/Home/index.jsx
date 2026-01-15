@@ -2,28 +2,29 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../../../Components/Header/Navbar';
 import Footer from '../../../Components/Footer/Footer';
 import ProductCard from '../../../Components/ProductCard';
-import CartModal from '../../../Components/CartModal';
-import { getProducts } from '../../../Context/loginContext';
+// import CartModal from '../../../Components/CartModal';
+import { getProducts } from '../../../Context/CartContext';
 import { message, Spin } from 'antd';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchProducts = async () => {
-        setLoading(true);
-        try {
-            const data = await getProducts();
-            setProducts(data);   // ✅ store in state
-        } catch (error) {
-            console.log(error);
-            message.error("Failed to fetch products");
-        }
-        setLoading(false);
-    };
-
     // ✅ fetch on page load
     useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const data = await getProducts();
+                // console.log('data', data)
+                setProducts(data);   // ✅ store in state
+            } catch (error) {
+                console.log(error);
+                message.error("Failed to fetch products");
+            }
+            setLoading(false);
+        };
+
         fetchProducts();
     }, []);
 
@@ -31,7 +32,7 @@ const Home = () => {
     return (
         <>
             <Navbar />
-            <CartModal />
+            {/* <CartModal /> */}
             <main className='min-vh-100'>
                 <section className="hero pb-2 pb-md-5">
                     <div className="container">
@@ -73,12 +74,49 @@ const Home = () => {
                     )}
                 </section>
 
-
+                {/* Cart preview (shows Firestore-backed cart items when signed in) */}
+                {/* <CartPreview /> */}
 
             </main>
             <Footer />
         </>
     );
 };
+
+// const CartPreview = () => {
+
+//     return (
+//         <section className="py-4 container">
+//             <h3 className="mb-3">Your Cart</h3>
+//             <div className="row">
+//                 <div className="col-12">
+//                     <div className="list-group">
+//                         {/* {cart.map(item => (
+//                             <div key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
+//                                 <div className="d-flex align-items-center">
+//                                     <img src={item.image} alt={item.title} style={{ width: 50, height: 50, objectFit: 'cover', marginRight: 12 }} />
+//                                     <div>
+//                                         <div className="fw-bold">{item.title}</div>
+//                                         <small className="text-muted">Rs {item.price} x {item.quantity}</small>
+//                                     </div>
+//                                 </div>
+//                                 <div>
+//                                     <span className="fw-bold">Rs {item.price * item.quantity}</span>
+//                                 </div>
+//                             </div>
+//                         ))} */}
+//                     </div>
+//                     <div className="mt-3 d-flex justify-content-between align-items-center">
+//                         {/* <strong>Total: Rs {cartTotal}</strong> */}
+//                         <div>
+//                             <button className="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#cartModal">View Cart</button>
+//                             <a className="btn btn-sm btn-primary" href="/checkout">Checkout</a>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </section>
+//     );
+// };
 
 export default Home;

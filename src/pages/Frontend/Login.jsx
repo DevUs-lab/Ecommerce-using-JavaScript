@@ -1,14 +1,14 @@
 import React from 'react';
 import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
-import CartModal from '../../Components/CartModal';
+// import CartModal from '../../Components/CartModal';
 import { Link } from 'react-router-dom';
 
 const Login = () => {
     return (
         <>
             <Navbar />
-            <CartModal />
+            {/* <CartModal /> */}
             <main className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
                 <div className="card shadow p-4" style={{ maxWidth: '400px', width: '100%' }}>
                     <h2 className="text-center mb-4">Login</h2>

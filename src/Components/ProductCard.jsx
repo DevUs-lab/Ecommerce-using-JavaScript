@@ -1,41 +1,45 @@
 import React from 'react';
 import { useCart } from '../Context/CartContext';
+import { message } from 'antd';
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
 
+    const handleAddToCart = () => {
+        addToCart(product);
+        message.success(`${product.productName} added to cart`);
+    };
+
     return (
-        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
-            <div className="card h-100 border-0 shadow-sm">
-                <img src={product.image} className="card-img-top img-fluid" alt={product.title} style={{ height: '200px', objectFit: 'contain', padding: '1rem' }} />
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div className="card h-100 shadow-sm border-0">
+                <div style={{ height: '200px', overflow: 'hidden' }}>
+                    <img
+                        src={product.imageUrl}
+                        className="card-img-top w-100 h-100"
+                        alt={product.productName}
+                        style={{ objectFit: 'cover' }}
+                    />
+                </div>
                 <div className="card-body d-flex flex-column">
-                    <span className='ms-2 text-dark'><i className="fa-solid fa-star text-warning"></i></span>
-                    <span className='ms-2 text-dark'><i className="fa-solid fa-star text-warning"></i></span>
-                    <span className='ms-2 text-dark'><i className="fa-solid fa-star text-warning"></i></span>
-                    <span className='ms-2 text-dark'><i className="fa-solid fa-star text-warning"></i></span>
-                    <span className='ms-2 text-dark'><i className="fa-solid fa-star text-warning"></i></span>
-                    <span className='ms-2 text-dark'><i className="fa-solid fa-star text-warning"></i></span>
-                    <span className='ms-2 text-dark'><i className="fa-solid fa-star text-warning"></i></span>
-                    <h5 className="card-title text-truncate">{product.title}</h5>
-                    <p className="card-text text-muted description text-truncate">{product.description}</p>
-                    <div className="mt-auto flex-column">
-                        <span className="fw-bold">Rs {product.price}</span>
-                        <span className='ms-3'><del>RS. {product.oldPrice}</del></span>
-                        <div className='my-3 opacity-75'><b>Stock:</b><span className='text-success ms-2'><small>{product.stock}</small></span></div>
-                        <div className='my-3'>
-                            <div className='d-flex align-items-center border justify-content-between'>
-                                <button className='btn px-3'>+</button>
-                                <span className='mx-2'>1</span>
-                                <button className='btn px-3' children="-" />
-                            </div>
-                        </div>
-                        <button
-                            className="btn btn-outline-primary btn-sm"
-                            onClick={() => addToCart(product)}
-                        >
-                            Add to Cart
-                        </button>
+                    <h5 className="card-title text-truncate">{product.productName}</h5>
+                    <p className="card-text text-muted small flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {product.descriptions}
+                    </p>
+                    <div className="mb-2">
+                        <span className="fw-bold fs-5">${product.sellPrice}</span>
+                        {product.delPrice && (
+                            <span className="text-muted text-decoration-line-through ms-2 small">
+                                ${product.delPrice}
+                            </span>
+                        )}
                     </div>
+                    <button
+                        className="btn btn-primary w-100 mt-auto"
+                        onClick={handleAddToCart}
+                    >
+                        Add to Cart
+                    </button>
                 </div>
             </div>
         </div>

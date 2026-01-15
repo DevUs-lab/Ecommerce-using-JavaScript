@@ -1,13 +1,13 @@
 import React from 'react';
 import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
-import CartModal from '../../Components/CartModal';
+// import CartModal from '../../Components/CartModal';
 
 const Contact = () => {
     return (
         <>
             <Navbar />
-            <CartModal />
+            {/* <CartModal /> */}
             <main className="py-5">
                 <div className="container">
                     <h1 className="text-center mb-5">Contact Us</h1>

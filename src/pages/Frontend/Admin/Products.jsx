@@ -2,7 +2,7 @@ import { message } from 'antd'
 import { setDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
-import { getProducts } from '../../../Context/loginContext';
+import { getProducts } from '../../../Context/CartContext';
 
 const Products = () => {
     const initialstate = {
