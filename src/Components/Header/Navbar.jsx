@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { useCart } from '../../Context/CartContext';
+// import { useCart } from '../../Context/CartContext';
 
 const Navbar = () => {
-    const { cartCount } = useCart();
+    // const { cartCount } = useCart();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -57,7 +57,7 @@ const Navbar = () => {
                                     data-bs-target="#cartModal"
                                 >
                                     <i className="fa-solid fa-cart-flatbed "></i>
-                                    <span id="count" className="ms-1">{cartCount}</span>
+                                    {/* <span id="count" className="ms-1">{cartCount}</span> */}
                                 </button>
                             </li>
                         </ul>

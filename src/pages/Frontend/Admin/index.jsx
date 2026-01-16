@@ -17,8 +17,8 @@ export default function AppRouter() {
                         Users
                     </Link>
 
-                    <Link to="products" className="d-block py-2 text-white text-decoration-none">
-                        Products
+                    <Link to="add-products" className="d-block py-2 text-white text-decoration-none">
+                        Add-Products
                     </Link>
 
                     <Link to="settings" className="d-block py-2 text-white text-decoration-none">

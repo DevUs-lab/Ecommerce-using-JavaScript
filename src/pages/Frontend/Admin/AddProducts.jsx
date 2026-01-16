@@ -2,7 +2,7 @@ import { message } from 'antd'
 import { setDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
-import { getProducts } from '../../../Context/CartContext';
+import { getProducts } from '../../../Context/getProducts';
 
 const Products = () => {
     const initialstate = {
@@ -13,7 +13,9 @@ const Products = () => {
         stock: ''
     }
 
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
     const [productsList, setProductsList] = useState([])
     const [products, setProducts] = useState(initialstate)
     const [image, setImage] = useState(null)
@@ -34,7 +36,9 @@ const Products = () => {
             if (!editId) {
                 if (!image) {
                     message.error("Please select an image")
+                    setLoading(false);
                     return
+
                 }
 
 
@@ -57,8 +61,7 @@ const Products = () => {
 
 
                 message.success("Product added successfully")
-                fetchProducts()
-
+                fetchProducts();
                 setProducts(initialstate)
                 setImage(null)
                 fileRef.current.value = "";
@@ -75,6 +78,9 @@ const Products = () => {
                 });
 
                 message.success("Product updated");
+                fetchProducts();
+                setEditId(null);
+                setProducts(initialstate);
             }
         } catch (error) {
             console.log(error)
@@ -109,7 +115,7 @@ const Products = () => {
 
     const fetchProducts = async () => {
 
-        setLoading(true)
+        setFetching(true)
 
         try {
             const data = await getProducts()
@@ -122,10 +128,11 @@ const Products = () => {
             message.error("Failed to fetch products")
 
         }
-        setLoading(false)
+        setFetching(false)
     }
 
     const handleDelete = async (item) => {
+        setIsDelete(true)
         try {
             await deleteDoc(doc(db, "products", item.id));
 
@@ -138,6 +145,8 @@ const Products = () => {
             console.log(error);
             message.error("Delete failed");
         }
+        setIsDelete(false)
+
     };
 
 
@@ -202,7 +211,7 @@ const Products = () => {
             </div>
 
             <div className="row mt-5">
-                {loading && <p>Loading...</p>}
+                {fetching && <p>Loading...</p>}
 
                 {productsList.map((item) => (
                     <div className="col-md-4" key={item.id}>
@@ -212,11 +221,14 @@ const Products = () => {
                                 <div className="card-body">
                                     <h5>{item.productName}</h5>
                                     <p>{item.descriptions}</p>
-                                    <p>Price: {item.sellPrice} <span>del: {item.delPrice}</span></p>
+                                    <p>Price: {item.sellPrice} <span>del: <del>{item.delPrice}</del></span></p>
                                     <p>Stock: {item.stock}</p>
                                 </div>
                                 <div className='text-center ms-auto'>
-                                    <button className='btn btn-danger me-4' onClick={() => handleDelete(item)}>Delete</button>
+                                    {
+                                        !isDelete ? <button className='btn btn-danger me-4' onClick={() => handleDelete(item)}>Delete</button> :
+                                            <button className='btn btn-danger me-4' disabled onClick={() => handleDelete(item)}>Deleting...</button>
+                                    }
                                     <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
                                 </div>
                             </div>

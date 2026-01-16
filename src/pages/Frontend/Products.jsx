@@ -3,7 +3,7 @@ import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
 // import CartModal from '../../Components/CartModal';
 // import { getProducts } from '../../Context/CartContext';
-import ShowProducts from '../../Components/ShowProducts.jsx';
+// import ShowProducts from '../../Components/ShowProducts.jsx';
 
 const Products = () => {
 
@@ -20,7 +20,7 @@ const Products = () => {
         <>
             <Navbar />
             {/* <CartModal /> */}
-            <ShowProducts />
+            {/* <ShowProducts /> */}
             <Footer />
         </>
     );

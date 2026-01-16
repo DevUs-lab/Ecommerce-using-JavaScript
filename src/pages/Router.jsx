@@ -4,7 +4,7 @@ import Frontend from './Frontend'
 import Admin from './Frontend/Admin'
 import Dashboard from './Frontend/Admin/Dashboard'
 import Users from './Frontend/Admin/Users'
-import Products from './Frontend/Admin/Products'
+import AddProducts from './Frontend/Admin/AddProducts'
 import Settings from './Frontend/Admin/Settings'
 
 const Index = () => {
@@ -14,7 +14,7 @@ const Index = () => {
             <Route path="/admin" element={<Admin />}>
                 <Route index element={<Dashboard />} />
                 <Route path="users" element={<Users />} />
-                <Route path="products" element={<Products />} />
+                <Route path="add-products" element={<AddProducts />} />
                 <Route path="settings" element={<Settings />} />
             </Route>
         </Routes>

@@ -3,7 +3,7 @@ import Navbar from '../../../Components/Header/Navbar';
 import Footer from '../../../Components/Footer/Footer';
 import ProductCard from '../../../Components/ProductCard';
 // import CartModal from '../../../Components/CartModal';
-import { getProducts } from '../../../Context/CartContext';
+import { getProducts } from '../../../Context/getProducts';
 import { message, Spin } from 'antd';
 
 const Home = () => {
@@ -17,7 +17,7 @@ const Home = () => {
             try {
                 const data = await getProducts();
                 // console.log('data', data)
-                setProducts(data);   // ✅ store in state
+                setProducts(data);
             } catch (error) {
                 console.log(error);
                 message.error("Failed to fetch products");
