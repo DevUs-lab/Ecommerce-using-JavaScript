@@ -33,7 +33,7 @@ const Home = () => {
         <>
             <Navbar />
             {/* <CartModal /> */}
-            <main className='min-vh-100'>
+            <main className='min-h-screen'>
                 <section className="hero pb-2 pb-md-5">
                     <div className="container">
                         <div className="row align-items-center">
@@ -52,20 +52,25 @@ const Home = () => {
                     </div>
                 </section>
 
-                <section id="products" className="py-5 container">
-                    <h2 className="text-center mb-5">Featured Products</h2>
+                <section id="products" className="py-12 px-4 mx-auto max-w-7xl">
+                    <h2 className="mb-8 text-center text-3xl font-bold">
+                        Featured Products
+                    </h2>
 
                     {loading && (
-                        <div className="d-flex justify-content-center">
+                        <div className="flex text-center py-5 justify-center">
                             <Spin size="large" />
                         </div>
                     )}
 
                     {!loading && products.length > 0 && (
-                        <div className="row g-4">
-                            {products.map(product => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
+                        <div className="container">
+
+                            <div className="row">
+                                {products.map(product => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
                         </div>
                     )}
 

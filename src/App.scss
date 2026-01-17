@@ -1,9 +1,11 @@
 /* @tailwind directives removed */
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "bootstrap/scss/bootstrap";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* @import "./toast.scss"; */
 /* Commenting out toast.scss for now as it might be missing, will verify later */
-@import "./index.css";
 
 .cartBtn:hover {
     background: black;
