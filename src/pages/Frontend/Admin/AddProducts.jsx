@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import { setDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { setDoc, doc, deleteDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
 import { getProducts } from '../../../Context/getProducts';
@@ -56,7 +56,7 @@ const Products = () => {
                     stock: Number(products.stock),
                     imageUrl,
                     publicId,
-                    createdAt: new Date()
+                    createdAt: serverTimestamp()
                 })
 
 
@@ -214,7 +214,7 @@ const Products = () => {
                 {fetching && <p>Loading...</p>}
 
                 {productsList.map((item) => (
-                    <div className="col-md-4" key={item.id}>
+                    <div className="col-md-4 py-3" key={item.id}>
                         <div className="card">
                             <img src={item.imageUrl} className="card-img-top" />
                             <div className='py-4'>
@@ -223,6 +223,21 @@ const Products = () => {
                                     <p>{item.descriptions}</p>
                                     <p>Price: {item.sellPrice} <span>del: <del>{item.delPrice}</del></span></p>
                                     <p>Stock: {item.stock}</p>
+                                    <p className="text-muted">
+                                        Added on:{" "}
+                                        {item.createdAt
+                                            ? item.createdAt.toDate
+                                                ? item.createdAt.toDate().toLocaleString("en-GB", {
+                                                    dateStyle: "medium",
+                                                    timeStyle: "short"
+                                                })
+                                                : new Date(item.createdAt).toLocaleString("en-GB", {
+                                                    dateStyle: "medium",
+                                                    timeStyle: "short"
+                                                })
+                                            : "N/A"}
+                                    </p>
+
                                 </div>
                                 <div className='text-center ms-auto'>
                                     {
@@ -231,6 +246,8 @@ const Products = () => {
                                     }
                                     <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>

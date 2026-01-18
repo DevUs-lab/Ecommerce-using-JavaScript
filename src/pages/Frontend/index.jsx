@@ -6,6 +6,7 @@ import Products from './Products'
 import Contact from './Contact'
 import Login from './Login'
 import Register from './Register'
+import Cart from './Cart'
 
 const Frontend = () => {
     return (
@@ -17,6 +18,8 @@ const Frontend = () => {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="*" element={<Home />} />
+            <Route path="/cart" element={<Cart />} />
+
         </Routes>
     )
 }

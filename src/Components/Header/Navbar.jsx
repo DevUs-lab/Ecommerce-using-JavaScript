@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-// import { useCart } from '../../Context/CartContext';
+import { useCart } from '../../Context/CartContext';
 
 const Navbar = () => {
-    // const { cartCount } = useCart();
+    const { cartCount } = useCart();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <header>
-            <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-2">
+            {/* <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-2">
                 <div className="container d-flex justify-content-between">
                     <p className="mb-0 header-p text-light p-2">
                         Free shipping, 30-day return or refund guarantee.
@@ -22,7 +22,7 @@ const Navbar = () => {
                         </li>
                     </ul>
                 </div>
-            </nav>
+            </nav> */}
 
             <nav className="navbar navbar-expand-lg bg-light navbar-light py-3">
                 <div className="container">
@@ -41,9 +41,7 @@ const Navbar = () => {
                             <li className="nav-item">
                                 <NavLink className="nav-link px-3" to="/">Home</NavLink>
                             </li>
-                            {/* <li className="nav-item">
-                                <NavLink className="nav-link px-3" to="/about">About</NavLink>
-                            </li> */}
+
                             <li className="nav-item">
                                 <NavLink className="nav-link px-3" to="/products">Products</NavLink>
                             </li>
@@ -51,14 +49,17 @@ const Navbar = () => {
                                 <NavLink className="nav-link px-3" to="/contact">Contact</NavLink>
                             </li>
                             <li className="nav-item">
-                                <button
-                                    className="nav-link btn cartBtn rounded-0 px-3 text-start text-lg-center border-0 bg-transparent"
+                                {/* <button
+                                    className="nav-link btn btn-danger cartBtn rounded-0 px-3 text-start text-lg-center border-0"
                                     data-bs-toggle="modal"
                                     data-bs-target="#cartModal"
-                                >
-                                    <i className="fa-solid fa-cart-flatbed "></i>
-                                    {/* <span id="count" className="ms-1">{cartCount}</span> */}
-                                </button>
+                                > */}
+                                <NavLink to="/cart" className="nav-link px-3 ">
+                                    <i className="fa-solid fa-cart-shopping"></i>
+                                    <span className="ms-1">🛒 {cartCount}</span>
+                                </NavLink>
+                                {/* </button> */}
+                                {/* <i className="fa-solid fa-cart-arrow-down text-dark"></i> */}
                             </li>
                         </ul>
                     </div>

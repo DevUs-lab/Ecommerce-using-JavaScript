@@ -11,6 +11,7 @@ const Index = () => {
     return (
         <Routes>
             <Route path="/*" element={<Frontend />} />
+
             <Route path="/admin" element={<Admin />}>
                 <Route index element={<Dashboard />} />
                 <Route path="users" element={<Users />} />
