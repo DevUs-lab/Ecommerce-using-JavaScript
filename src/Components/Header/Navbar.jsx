@@ -1,28 +1,37 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { useCart } from '../../Context/CartContext';
-
+import './Header.css';
 const Navbar = () => {
     const { cartCount } = useCart();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <header>
-            {/* <nav className="navbar navbar-expand-lg bg-dark navbar-dark py-2">
-                <div className="container d-flex justify-content-between">
-                    <p className="mb-0 header-p text-light p-2">
-                        Free shipping, 30-day return or refund guarantee.
-                    </p>
-                    <ul className="navbar-nav d-flex flex-row ms-auto">
-                        <li className="nav-item me-2">
-                            <NavLink className="nav-link px-2 px-md-3" to="/login">Login</NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link px-2 px-md-3" to="/register">Register</NavLink>
-                        </li>
-                    </ul>
+            {/* <div className="top-bar d-none d-lg-block bg-dark">
+                <div className="container py-3">
+                    <div className="d-flex justify-content-end align-items-center gap-3 text-decoration-none">
+                        <a href="/product-category/wall-decor" className="top-link text-decoration-none text-white">
+                            Wall Decor Furniture
+                        </a>
+                        <a href="/product-category/tv-unit" className="top-link text-decoration-none text-white">
+                            TV Entertainment Unit
+                        </a>
+                        <a href="/product-category/key-rack" className="top-link text-decoration-none text-white">
+                            Key Chain Racks
+                        </a>
+                        <a href="/my-account" className="top-link text-decoration-none text-white">
+                            My Account
+                        </a>
+                        <a href="/blog" className="top-link text-decoration-none text-white">
+                            Blog
+                        </a>
+                        <a href="tel:+923451222223" className="top-link fw-bold text-decoration-none text-white">
+                            Call Us
+                        </a>
+                    </div>
                 </div>
-            </nav> */}
+            </div> */}
 
             <nav className="navbar navbar-expand-lg bg-light navbar-light py-3">
                 <div className="container">
