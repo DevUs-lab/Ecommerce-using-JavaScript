@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 const CartContext = createContext();
 
@@ -7,6 +9,24 @@ export const CartProvider = ({ children }) => {
         const saved = localStorage.getItem("cart");
         return saved ? JSON.parse(saved) : [];
     });
+
+    const [deliveryCharge, setDeliveryCharge] = useState(0);
+
+    // 🔹 FETCH SETTINGS
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const docRef = doc(db, "globalSettings", "storeInfo");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    setDeliveryCharge(docSnap.data().deliveryCharge || 0);
+                }
+            } catch (error) {
+                console.error("Failed to fetch delivery charge", error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     // 🔹 SAVE TO LOCAL STORAGE
     useEffect(() => {
@@ -60,6 +80,8 @@ export const CartProvider = ({ children }) => {
         0
     );
 
+    const grandTotal = cartTotal + deliveryCharge;
+
     return (
         <CartContext.Provider value={{
             cartItems,
@@ -69,7 +91,10 @@ export const CartProvider = ({ children }) => {
             removeFromCart,
             clearCart,
             cartCount,
-            cartTotal
+            cartTotal,
+            deliveryCharge,
+            setDeliveryCharge, // Expose setter if needed, but better to fetch from DB
+            grandTotal
         }}>
             {children}
         </CartContext.Provider>

@@ -1,0 +1,40 @@
+.footer {
+    margin-top: 40px;
+}
+
+/* Links */
+.footer-links li {
+    margin-bottom: 6px;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+/* Bottom bar */
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile text adjustment */
+@media (max-width: 576px) {
+
+    .footer h5,
+    .footer h6 {
+        font-size: 15px;
+    }
+
+    .footer p {
+        font-size: 13px;
+    }
+
+    .footer-links a {
+        font-size: 13px;
+    }
+}

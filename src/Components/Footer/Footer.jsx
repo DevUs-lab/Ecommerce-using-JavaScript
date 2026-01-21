@@ -1,58 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
+import './footer.css'
 
 const Footer = () => {
-    const [year, setYear] = useState(new Date().getFullYear());
-
-    useEffect(() => {
-        setYear(new Date().getFullYear());
-    }, []);
+    const year = new Date().getFullYear();
 
     return (
-        <footer className="bg-dark">
-            <div className="container py-5 ">
-                <div className="row g-4 mt-0">
-                    <div className="col-12 col-md-6 col-lg-3">
-                        <nav className="text-white">
-                            <Link to="/" className="text-decoration-none">Umair Store</Link>
-                            <p>wellcome to Umair Store</p>
-                        </nav>
+        <footer className="footer bg-dark text-light">
+            <div className="container py-5">
+                <div className="row g-4 text-center text-md-start">
+
+                    {/* Brand */}
+                    <div className="col-12 col-md-6 col-lg-4">
+                        <h5 className="mb-3">
+                            <Link to="/" className="text-decoration-none text-light">
+                                Umair Store
+                            </Link>
+                        </h5>
+                        <p className="text-white-50 small">
+                            Your one-stop shop for quality products at the best prices.
+                        </p>
                     </div>
-                    <div className="col-6 col-md-6 col-lg-3">
-                        <nav className="text-white">
-                            <h6 className="text-decoration-none">Shopping</h6>
-                            <ul>
-                                <li><Link to="/products">phones</Link></li>
-                                <li><Link to="/products">loptop</Link></li>
-                                <li><Link to="/products">computers</Link></li>
-                                <li><Link to="/products">components</Link></li>
-                            </ul>
-                        </nav>
+
+                    {/* Quick Links */}
+                    <div className="col-6 col-md-3 col-lg-2">
+                        <h6 className="mb-3">Quick Links</h6>
+                        <ul className="list-unstyled footer-links">
+                            <li><Link to="/products">Products</Link></li>
+                            <li><Link to="/categories">Categories</Link></li>
+                            <li><Link to="/contact">Contact Us</Link></li>
+                        </ul>
                     </div>
-                    <div className="col-6 col-md-6 col-lg-3">
-                        <nav className="text-white">
-                            <h6 className="text-decoration-none">Experience</h6>
-                            <ul>
-                                <li><Link to="/about">About Us</Link></li>
-                                <li><Link to="/contact">Contact Us</Link></li>
-                                <li><Link to="/products">Deleviry</Link></li>
-                                <li><Link to="/products">Retrun and Exchange</Link></li>
-                            </ul>
-                        </nav>
+
+                    {/* Support */}
+                    <div className="col-6 col-md-3 col-lg-2">
+                        <h6 className="mb-3">Support</h6>
+                        <ul className="list-unstyled footer-links">
+                            <li><Link to="/faq">FAQ</Link></li>
+                            <li><Link to="/privacy">Privacy Policy</Link></li>
+                            <li><Link to="/terms">Terms & Conditions</Link></li>
+                        </ul>
                     </div>
-                    <div className="col-12 col-md-6 col-lg-3">
-                        <nav className="text-white">
-                            <h6 className="text-decoration-none">News Letter</h6>
-                            <form action="" className="input-group rounded-0">
-                                <input type="email" className="form-control rounded-0" placeholder="Enter your email" />
-                                <button type="submit" className="btn btn-primary rounded-0">Send</button>
-                            </form>
-                        </nav>
-                    </div>
+
                 </div>
             </div>
-            <div className="bg-dark text-light text-center container-fluid opacity-25">
-                <p className="mb-0 py-2">All Rights Reserved. <span>{year}</span></p>
+
+            {/* Bottom Bar */}
+            <div className="footer-bottom text-center py-3">
+                <small className="text-white-50">
+                    © {year} Umair Store. All Rights Reserved.
+                </small>
             </div>
         </footer>
     );

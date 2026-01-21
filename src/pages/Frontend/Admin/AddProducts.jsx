@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import { setDoc, doc, deleteDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { setDoc, doc, deleteDoc, updateDoc, serverTimestamp, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
 import { getProducts } from '../../../Context/getProducts';
@@ -10,16 +10,58 @@ const Products = () => {
         descriptions: '',
         sellPrice: '',
         delPrice: '',
-        stock: ''
+        stock: '',
+        category: ''
     }
 
+    const [categoriesloading, setCategoriesloading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
-    const [isDelete, setIsDelete] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
     const [productsList, setProductsList] = useState([])
     const [products, setProducts] = useState(initialstate)
-    const [image, setImage] = useState(null)
+    const [images, setImages] = useState([]);
     const [editId, setEditId] = useState(null);
+    const [categoryName, setCategoryName] = useState("");
+    const [categories, setCategories] = useState([]);
+
+
+    const makeSlug = (text) =>
+        text.toLowerCase().replace(/\s+/g, "-");
+
+
+    const handleAddCategory = async (e) => {
+        e.preventDefault()
+
+        setCategoriesloading(true);
+        if (!categoryName) {
+            message.error("Category name required");
+            setCategoriesloading(false);
+
+            return;
+        }
+
+        const slug = makeSlug(categoryName);
+        try {
+            await setDoc(doc(db, "categories", slug), {
+                name: categoryName,
+                slug,
+                createdAt: serverTimestamp()
+            });
+
+            message.success("Category added");
+            setCategoryName("");
+            fetchProducts(); // IMPORTANT
+        } catch (error) {
+            console.log("Failed to add category", error);
+            message.error("Failed to add category");
+        } finally {
+            setCategoriesloading(false);
+        }
+
+    };
+
+
 
     const handleChange = (e) => {
         setProducts({ ...products, [e.target.name]: e.target.value })
@@ -34,15 +76,15 @@ const Products = () => {
         try {
 
             if (!editId) {
-                if (!image) {
-                    message.error("Please select an image")
+                if (images.length === 0) {
+                    message.error("Please select at least one image")
                     setLoading(false);
                     return
 
                 }
 
 
-                const { imageUrl, publicId } = await uploadImageToCloudinary()
+                const uploadedImages = await uploadImagesToCloudinary()
 
                 const date = new Date().getTime()
                 const id = `prod_${date}`
@@ -54,8 +96,9 @@ const Products = () => {
                     sellPrice: Number(products.sellPrice),
                     delPrice: Number(products.delPrice),
                     stock: Number(products.stock),
-                    imageUrl,
-                    publicId,
+                    category: products.category,
+                    itemImages: uploadedImages, // Store array of {url, publicId}
+                    imageUrl: uploadedImages[0]?.url, // Keep main image for backward compatibility
                     createdAt: serverTimestamp()
                 })
 
@@ -63,24 +106,37 @@ const Products = () => {
                 message.success("Product added successfully")
                 fetchProducts();
                 setProducts(initialstate)
-                setImage(null)
+                setImages([])
                 fileRef.current.value = "";
 
             } else {
 
-                await updateDoc(doc(db, "products", editId), {
+                // Logic for editing images could be complex (add/remove), 
+                // for now let's just update text fields or replace images if new ones selected
+                let updatedData = {
                     productName: products.productName,
                     descriptions: products.descriptions,
                     sellPrice: Number(products.sellPrice),
                     delPrice: Number(products.delPrice),
                     stock: Number(products.stock),
+                    category: products.category,
                     updatedAt: new Date()
-                });
+                };
+
+                if (images.length > 0) {
+                    const uploadedImages = await uploadImagesToCloudinary()
+                    updatedData.itemImages = uploadedImages;
+                    updatedData.imageUrl = uploadedImages[0]?.url;
+                }
+
+                await updateDoc(doc(db, "products", editId), updatedData);
 
                 message.success("Product updated");
                 fetchProducts();
                 setEditId(null);
                 setProducts(initialstate);
+                setImages([]);
+                if (fileRef.current) fileRef.current.value = "";
             }
         } catch (error) {
             console.log(error)
@@ -91,63 +147,74 @@ const Products = () => {
     }
 
 
-    const uploadImageToCloudinary = async () => {
-        const formData = new FormData()
-        formData.append("file", image)
-        formData.append("upload_preset", "products_upload")
+    const uploadImagesToCloudinary = async () => {
+        const uploadPromises = images.map(async (image) => {
+            const formData = new FormData()
+            formData.append("file", image)
+            formData.append("upload_preset", "products_upload")
 
-        const res = await fetch(
-            "https://api.cloudinary.com/v1_1/umairdevus/image/upload",
-            {
-                method: "POST",
-                body: formData
+            const res = await fetch(
+                "https://api.cloudinary.com/v1_1/umairdevus/image/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            )
+            const data = await res.json()
+            return {
+                url: data.secure_url, // Changed to lowercase 'url' to be consistent or match cloud response
+                publicId: data.public_id
             }
-        )
+        });
 
-        const data = await res.json()
-        return {
-            imageUrl: data.secure_url,
-            publicId: data.public_id
-        }
+        return Promise.all(uploadPromises);
     }
 
 
 
     const fetchProducts = async () => {
-
         setFetching(true)
 
         try {
-            const data = await getProducts()
+            // PRODUCTS
+            const productsData = await getProducts()
+            setProductsList(productsData)
 
-            // const productsList = data.map(doc => ({ id: doc.id, ...doc.data() }))
-            setProductsList(data)
-            console.log('productsList', data)
+            if (productsData.length === 0) {
+                message.info("No products found")
+            }
+
+            // CATEGORIES
+            const categorySnapshot = await getDocs(collection(db, "categories"))
+            const categoriesList = categorySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            setCategories(categoriesList)
+
         } catch (error) {
-            console.log('error', error)
-            message.error("Failed to fetch products")
-
+            console.log("error", error)
+            message.error("Failed to fetch data")
+        } finally {
+            setFetching(false)
         }
-        setFetching(false)
+
     }
 
     const handleDelete = async (item) => {
-        setIsDelete(true)
+        setDeletingId(item.id);
         try {
             await deleteDoc(doc(db, "products", item.id));
-
             setProductsList(prev =>
-                prev.filter(product => product.id !== item.id)
+                prev.filter(p => p.id !== item.id)
             );
-
             message.success("Product deleted");
-        } catch (error) {
-            console.log(error);
+        } catch {
             message.error("Delete failed");
         }
-        setIsDelete(false)
-
+        setDeletingId(null);
     };
+
 
 
     const handleEdit = (item) => {
@@ -157,6 +224,7 @@ const Products = () => {
             sellPrice: item.sellPrice,
             delPrice: item.delPrice,
             stock: item.stock,
+            category: item.category,
         });
 
         setEditId(item.id);
@@ -165,12 +233,76 @@ const Products = () => {
     useEffect(() => { fetchProducts() }, [])
 
 
+    const handleDeleteCategory = async (id) => {
+        const hasProducts = productsList.some(p => p.category === id);
+        if (hasProducts) {
+            message.error("Cannot delete category with products. Delete products first.");
+            return;
+        }
+        if (!window.confirm("Are you sure you want to delete this category?")) return;
+
+        try {
+            await deleteDoc(doc(db, "categories", id));
+            message.success("Category deleted");
+            fetchProducts();
+        } catch (error) {
+            console.log(error);
+            message.error("Failed to delete category");
+        }
+    };
+
+
+
     return (
         <div className='container'>
             <div className="row">
                 <div className="col">
+                    <h2 className="text-center py-5">Add Category</h2>
+                    <form onSubmit={handleAddCategory}>
+
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Category Name"
+                            value={categoryName}
+                            onChange={(e) => setCategoryName(e.target.value)}
+                        />
+
+                        <div className="text-center mt-3">
+                            <button className="btn btn-primary" disabled={categoriesloading}>
+                                {categoriesloading ? "Adding..." : "Add Category"}
+                            </button>
+                        </div>
+                    </form>
+                    <h5 className="mt-4">Manage Categories</h5>
+
+                    <ul className="list-group">
+                        {categories.map(cat => (
+                            <li
+                                key={cat.id}
+                                className="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                                <span>{cat.name}</span>
+
+                                <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => handleDeleteCategory(cat.id)}
+                                >
+                                    Delete
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
 
                     <h2 className='text-center py-5'>Add Product</h2>
+
+
+
                     <form onSubmit={HandleSubmit}>
 
                         <div>
@@ -179,7 +311,8 @@ const Products = () => {
                                     ref={fileRef}
                                     type="file"
                                     className="form-control"
-                                    onChange={(e) => setImage(e.target.files[0])}
+                                    multiple
+                                    onChange={(e) => setImages([...e.target.files])}
                                 />
                             )}
                         </div>
@@ -199,6 +332,21 @@ const Products = () => {
                         <div className='my-3'>
                             <input type="number" placeholder='stock' className='form-control' name='stock' onChange={handleChange} value={products.stock} />
                         </div>
+
+                        <div className='my-3'>
+                            <select
+                                className="form-control"
+                                name="category"
+                                value={products.category} onChange={handleChange} >
+                                <option value="">Select Category</option>
+                                {categories.map(cat => (
+                                    <option key={cat.slug} value={cat.slug}>
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className='text-center'>
                             {
                                 editId ? loading ? <button className='btn btn-primary w-50 text-center' disabled>Updating...</button> : <button className='btn btn-primary w-50 text-center'>Update Product</button> :
@@ -208,10 +356,10 @@ const Products = () => {
                     </form>
                 </div>
 
-            </div>
+            </div >
 
             <div className="row mt-5">
-                {fetching && <p>Loading...</p>}
+                {fetching && <div className='text-center'>Loading...</div>}
 
                 {productsList.map((item) => (
                     <div className="col-md-4 py-3" key={item.id}>
@@ -239,10 +387,16 @@ const Products = () => {
                                     </p>
 
                                 </div>
-                                <div className='text-center ms-auto'>
+                                <div className='text-center ms-auto d-flex justify-content-center gap-3 mb-3'>
                                     {
-                                        !isDelete ? <button className='btn btn-danger me-4' onClick={() => handleDelete(item)}>Delete</button> :
-                                            <button className='btn btn-danger me-4' disabled onClick={() => handleDelete(item)}>Deleting...</button>
+                                        <button
+                                            className="btn btn-danger"
+                                            disabled={deletingId === item.id}
+                                            onClick={() => handleDelete(item)}
+                                        >
+                                            {deletingId === item.id ? "Deleting..." : "Delete"}
+                                        </button>
+
                                     }
                                     <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
                                 </div>
@@ -254,7 +408,7 @@ const Products = () => {
                 ))}
             </div>
 
-        </div>
+        </div >
     )
 }
 

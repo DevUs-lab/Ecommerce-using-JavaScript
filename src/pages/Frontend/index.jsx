@@ -4,7 +4,7 @@ import Home from './Home'
 import About from './About'
 import Products from './Products'
 import Contact from './Contact'
-import Login from './Login'
+import Login from './Admin/AdminLogin'
 import Register from './Register'
 import Cart from './Cart'
 

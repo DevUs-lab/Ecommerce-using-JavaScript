@@ -20,6 +20,16 @@ const Products = () => {
             setLoading(false);
         })();
     }, []);
+
+    const groupedProducts = products.reduce((acc, product) => {
+        if (!acc[product.category]) {
+            acc[product.category] = [];
+        }
+        acc[product.category].push(product);
+        return acc;
+    }, {});
+
+
     return (
         <>
             <Navbar />
@@ -42,9 +52,22 @@ const Products = () => {
                             <div className="container">
 
                                 <div className="row">
-                                    {products.map(product => (
-                                        <ProductCard key={product.id} product={product} />
+                                    {Object.entries(groupedProducts).map(([category, items]) => (
+                                        <div key={category} className="mb-5">
+
+                                            <h2 className="mb-4 text-capitalize text-center">
+                                                {category.replace("-", " ")}
+                                            </h2>
+
+                                            <div className="row">
+                                                {items.map(product => (
+                                                    <ProductCard key={product.id} product={product} />
+                                                ))}
+                                            </div>
+
+                                        </div>
                                     ))}
+
                                 </div>
                             </div>
                         )}

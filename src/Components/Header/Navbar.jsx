@@ -65,7 +65,7 @@ const Navbar = () => {
                                 > */}
                                 <NavLink to="/cart" className="nav-link px-3 ">
                                     <i className="fa-solid fa-cart-shopping"></i>
-                                    <span className="ms-1">🛒 {cartCount}</span>
+                                    <sup className="ms-1 mb-4">🛒 {cartCount}</sup>
                                 </NavLink>
                                 {/* </button> */}
                                 {/* <i className="fa-solid fa-cart-arrow-down text-dark"></i> */}
