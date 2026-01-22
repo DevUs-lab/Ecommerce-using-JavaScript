@@ -16,7 +16,8 @@ const Products = () => {
         (async () => {
             setLoading(true);
             const data = await getProducts();
-            setProducts(data);
+            const activeProducts = data.filter(product => product.stock > 0);
+            setProducts(activeProducts);
             setLoading(false);
         })();
     }, []);

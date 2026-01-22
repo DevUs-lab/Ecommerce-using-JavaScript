@@ -26,7 +26,8 @@ const Home = () => {
             try {
                 const data = await getProducts();
                 // console.log('data', data)
-                setProducts(data);
+                const activeProducts = data.filter(product => product.stock > 0);
+                setProducts(activeProducts);
             } catch (error) {
                 console.log(error);
                 message.error("Failed to fetch products");

@@ -9,10 +9,12 @@ const AdminLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setLoading(true);
         setError("");
 
         try {
@@ -21,6 +23,7 @@ const AdminLogin = () => {
         } catch (err) {
             setError(err.message);
         }
+        setLoading(false);
     };
 
     return (
@@ -57,12 +60,12 @@ const AdminLogin = () => {
                             />
                         </div>
 
-                        <button type="submit" className="btn btn-primary w-100">Login</button>
+                        <button type="submit" className="btn btn-primary w-100" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
                     </form>
 
-                    <p className="mt-3 text-center">
+                    {/* <p className="mt-3 text-center">
                         Don't have an account? <Link to="/register">Register</Link>
-                    </p>
+                    </p> */}
                 </div>
             </main>
             <Footer />

@@ -70,7 +70,7 @@ const ProductDetail = () => {
 
     if (loading) {
         return (
-            <div className="d-flex align-items-center justify-content-center min-vh-100">
+            <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh" }}>
                 <Spin size="large" />
             </div>
         );
@@ -80,7 +80,7 @@ const ProductDetail = () => {
         return (
             <>
                 <Navbar />
-                <div className="container py-5 text-center min-vh-100">
+                <div className="container py-5 text-center" style={{ minHeight: "100vh" }}>
                     <h2>Product not found</h2>
                 </div>
                 <Footer />
@@ -96,7 +96,7 @@ const ProductDetail = () => {
     return (
         <>
             <Navbar />
-            <div className="container py-5 min-vh-100">
+            <div className="container py-5" style={{ minHeight: "100vh" }}>
                 <div className="row">
                     {/* LEFT: IMAGE & GALLERY */}
                     <div className="col-md-6 mb-4">
@@ -157,7 +157,13 @@ const ProductDetail = () => {
                             <div className="btn-group" role="group">
                                 <button className="btn btn-outline-secondary" onClick={handleDecrement}>-</button>
                                 <span className="btn btn-outline-secondary disabled fw-bold text-dark px-4">{quantity}</span>
-                                <button className="btn btn-outline-secondary" onClick={handleIncrement}>+</button>
+                                <button
+                                    className="btn btn-outline-secondary"
+                                    onClick={handleIncrement}
+                                    disabled={quantity >= product.stock}
+                                >
+                                    +
+                                </button>
                             </div>
                             <span className="ms-3 text-muted small">{product.stock} items available</span>
                         </div>

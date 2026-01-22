@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../../firebase/config";
+import { Spin } from "antd";
 
 export default function AppRouter() {
     const [loading, setLoading] = useState(true);
@@ -28,13 +29,13 @@ export default function AppRouter() {
         navigate("/adminlogin");
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+        <Spin size="large" /></div>;
 
     return (
         <div className="container-fluid">
             <div className="row min-vh-100">
 
-                {/* Sidebar */}
                 <div
                     className={`bg-dark text-white p-4 position-fixed top-0 start-0 vh-100 overflow-auto ${sidebarOpen ? "d-block" : "d-none d-md-block"
                         }`}
@@ -49,6 +50,10 @@ export default function AppRouter() {
                     >
                         Dashboard
                     </Link>
+                    <Link to="/admin/orders" className="d-block py-2 text-decoration-none text-white">
+                        Orders
+                    </Link>
+
                     <Link
                         to="/admin/users"
                         className="d-block py-2 text-white text-decoration-none"
@@ -87,7 +92,7 @@ export default function AppRouter() {
 
                 {/* Content */}
                 <div
-                    className="col-12 col-md-9 offset-md-3 p-4 bg-light"
+                    className="col-12 col-md-9 offset-md-3 p-4 bg-light min-vh-100"
                     style={{ minHeight: "100vh" }}
                 >
                     <Outlet />

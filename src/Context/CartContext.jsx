@@ -10,7 +10,7 @@ export const CartProvider = ({ children }) => {
         return saved ? JSON.parse(saved) : [];
     });
 
-    const [deliveryCharge, setDeliveryCharge] = useState(0);
+    const [deliveryCharge, setDeliveryCharge] = useState(null);
 
     // 🔹 FETCH SETTINGS
     useEffect(() => {
@@ -29,23 +29,62 @@ export const CartProvider = ({ children }) => {
     }, []);
 
     // 🔹 SAVE TO LOCAL STORAGE
+    // useEffect(() => {
+    //     localStorage.setItem("cart", JSON.stringify(cartItems));
+    // }, [cartItems]);
+
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cartItems));
+        if (cartItems) {
+            localStorage.setItem("cart", JSON.stringify(cartItems));
+        }
     }, [cartItems]);
 
+
+    // const addToCart = (product, quantity) => {
+    //     setCartItems(prev => {
+    //         const existing = prev.find(item => item.id === product.id);
+    //         if (existing) {
+    //             return prev.map(item =>
+    //                 item.id === product.id
+    //                     ? { ...item, quantity: item.quantity + quantity }
+    //                     : item
+    //             );
+    //         }
+    //         return [...prev, { ...product, quantity }];
+    //     });
+    // };
     const addToCart = (product, quantity) => {
         setCartItems(prev => {
             const existing = prev.find(item => item.id === product.id);
+
             if (existing) {
+                const newQty = existing.quantity + quantity;
+
+                if (newQty > product.stock) {
+                    return prev.map(item =>
+                        item.id === product.id
+                            ? { ...item, quantity: product.stock }
+                            : item
+                    );
+                }
+
                 return prev.map(item =>
                     item.id === product.id
-                        ? { ...item, quantity: item.quantity + quantity }
+                        ? { ...item, quantity: newQty }
                         : item
                 );
             }
-            return [...prev, { ...product, quantity }];
+
+            return [
+                ...prev,
+                {
+                    ...product,
+                    quantity: quantity > product.stock ? product.stock : quantity
+                }
+            ];
         });
     };
+
 
     const increment = (id) => {
         setCartItems(prev =>
@@ -80,7 +119,7 @@ export const CartProvider = ({ children }) => {
         0
     );
 
-    const grandTotal = cartTotal + deliveryCharge;
+    const grandTotal = cartTotal + (deliveryCharge || 0);
 
     return (
         <CartContext.Provider value={{

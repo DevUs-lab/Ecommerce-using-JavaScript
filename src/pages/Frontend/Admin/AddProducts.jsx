@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { message, Spin } from 'antd'
 import { setDoc, doc, deleteDoc, updateDoc, serverTimestamp, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
@@ -15,6 +15,7 @@ const Products = () => {
     }
 
     const [categoriesloading, setCategoriesloading] = useState(false);
+    const [deletingCat, setDeletingCat] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
@@ -235,6 +236,7 @@ const Products = () => {
 
     const handleDeleteCategory = async (id) => {
         const hasProducts = productsList.some(p => p.category === id);
+        setDeletingCat(id);
         if (hasProducts) {
             message.error("Cannot delete category with products. Delete products first.");
             return;
@@ -249,6 +251,7 @@ const Products = () => {
             console.log(error);
             message.error("Failed to delete category");
         }
+        setDeletingCat(null);
     };
 
 
@@ -287,8 +290,9 @@ const Products = () => {
                                 <button
                                     className="btn btn-sm btn-danger"
                                     onClick={() => handleDeleteCategory(cat.id)}
+                                    disabled={deletingCat === cat.id}
                                 >
-                                    Delete
+                                    {deletingCat === cat.id ? "Deleting..." : "Delete"}
                                 </button>
                             </li>
                         ))}
@@ -359,7 +363,7 @@ const Products = () => {
             </div >
 
             <div className="row mt-5">
-                {fetching && <div className='text-center'>Loading...</div>}
+                {fetching && <div className='d-flex justify-content-center align-items-center min-vh-100'><Spin size='large' /></div>}
 
                 {productsList.map((item) => (
                     <div className="col-md-4 py-3" key={item.id}>

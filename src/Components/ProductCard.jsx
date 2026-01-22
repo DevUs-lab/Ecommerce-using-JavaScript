@@ -5,83 +5,100 @@ import { message } from 'antd';
 import './productCard.css';
 
 const ProductCard = ({ product }) => {
-    const Navigate = useNavigate();
+    const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
     const { addToCart } = useCart();
 
-    console.log('product', product)
+    // console.log('product', product)
 
 
 
     const handleAddToCart = () => {
+        if (product.stock <= 0) {
+            message.error("Out of stock");
+            return;
+        }
         addToCart(product, quantity);
         message.success("Item added to cart");
     };
 
+
     const handleShopNow = () => {
+        if (product.stock <= 0) {
+            message.error("Out of stock");
+            return;
+        }
         addToCart(product, quantity);
         message.success("Proceeding to checkout");
-        Navigate('/cart');
+        navigate('/cart');
     };
 
 
 
     return (
-        <div className="mx-auto col-11 col-md-4 col-lg-3 mb-4" >
-            <div className='border shadow'>
+        <div className="mx-auto col-12 col-md-4 col-lg-3 mb-4">
+            <div className="border shadow product-card">
 
-                <div
-                    className="cursor-pointer"
-                    onClick={() => Navigate(`/product/${product.id}`)}
-                >
-                    <img
-                        src={product.imageUrl}
-                        alt={product.productName}
-                        className="img-fluid"
-                    />
-                </div>
+                <div className="row g-0 align-items-center">
 
-                <div className="mt-2 gap-2 pb-2 px-2">
-
-
-
-                    <h3 className="mt-1 text-wrap" onClick={() => Navigate(`/product/${product.id}`)}>
-                        {product.productName}
-                    </h3>
-
-                    <p className="mb-1 fw-lighter text-wrap product-description">
-                        {product.descriptions}
-                    </p>
-
-
-                    <div className="mb-1 flex items-center gap-3" onClick={() => Navigate(`/product/${product.id}`)}>
-                        <p className="mb-0 text-lg font-bold text-sky-700">
-                            Rs {product.sellPrice}
-                            <del className='ms-3'> Rs {product.delPrice}</del>
-                        </p>
+                    {/* IMAGE */}
+                    <div
+                        className="col-5 col-md-12 cursor-pointer"
+                        onClick={() => navigate(`/product/${product.id}`)}
+                    >
+                        <img
+                            src={product.imageUrl}
+                            alt={product.productName}
+                            className="img-fluid product-image rounded"
+                        />
                     </div>
 
+                    {/* DETAILS */}
+                    <div className="col-7 col-md-12">
+                        <div className="p-2 p-md-3">
 
+                            <h6
+                                className="mb-1 fw-bold"
+                                onClick={() => navigate(`/product/${product.id}`)}
+                            >
+                                {product.productName}
+                            </h6>
 
+                            <p className="text-muted mb-1 d-none d-md-block product-description">
+                                {product.descriptions}
+                            </p>
 
-                    <div className="d-flex flex-column pb-2 px-3 text-center">
+                            <p className="fw-bold mb-2" style={{ color: "#0097a7" }}>
+                                Rs {product.sellPrice}
+                                <del className="ms-2 text-muted">
+                                    Rs {product.delPrice}
+                                </del>
+                            </p>
 
+                            <div className="d-flex gap-2">
+                                <button
+                                    className="btn btn-primary btn-small w-50"
+                                    onClick={handleAddToCart}
+                                >
+                                    Add to Cart
+                                </button>
 
+                                <button
+                                    className="btn btn-success btn-small w-50"
+                                    onClick={handleShopNow}
+                                >
+                                    Buy Now
+                                </button>
 
-                        <div className="d-flex w-100 gap-2 align-items-center justify-content-center">
-                            <button className="btn btn-primary btn-small " onClick={handleAddToCart}>
-                                Add to Cart
-                            </button>
-                            <button className="btn btn-success btn-small " onClick={handleShopNow}>
-                                Shop Now
-                            </button>
+                            </div>
+
                         </div>
                     </div>
 
                 </div>
             </div>
-
         </div>
+
     );
 };
 
