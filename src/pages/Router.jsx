@@ -17,7 +17,7 @@ const Index = () => {
     return (
         <Routes>
             {/* Public Frontend */}
-            <Route path="/*" element={<Frontend />} />
+
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/faq" element={<FAQs />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -33,6 +33,7 @@ const Index = () => {
             </Route>
 
             <Route path="/adminlogin" element={<AdminLogin />} />
+            <Route path="/*" element={<Frontend />} />
         </Routes>
     );
 };
