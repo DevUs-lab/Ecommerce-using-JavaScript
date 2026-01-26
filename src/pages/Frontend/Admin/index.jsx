@@ -41,7 +41,13 @@ export default function AppRouter() {
                         }`}
                     style={{ width: "250px", zIndex: 9999 }}
                 >
-                    <h3 className="text-center mb-4">Admin Panel</h3>
+                    <div className="d-fle">
+
+                        <button className="btn btn-info mt-4" onClick={() => setSidebarOpen(false)}>
+                            back
+                        </button>
+                        <h3 className="text-center mb-4">Admin Panel</h3>
+                    </div>
 
                     <Link
                         to="/admin"
@@ -82,13 +88,15 @@ export default function AppRouter() {
                 </div>
 
                 {/* Mobile toggle button */}
-                <button
-                    className="btn btn-dark d-md-none position-fixed top-0 start-0 m-2"
-                    style={{ zIndex: 10000 }}
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                >
-                    ☰
-                </button>
+                <div className="mx-auto d-flex align-items-center justify-content-center text-center">
+
+                    <button
+                        className="btn btn-dark d-md-none w-75 top-0 start-0 m-2"
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                    >
+                        ☰
+                    </button>
+                </div>
 
                 {/* Content */}
                 <div
