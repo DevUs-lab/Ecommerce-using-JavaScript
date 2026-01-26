@@ -35,7 +35,7 @@ const Navbar = () => {
 
             <nav className="navbar navbar-expand-lg bg-light navbar-light py-3">
                 <div className="container">
-                    <Link className="navbar-brand p-2 px-3" to="/">Umair Store</Link>
+                    <Link className="navbar-brand p-2 px-3" to="/">Easy Buy</Link>
                     <button
                         className="navbar-toggler"
                         type="button"

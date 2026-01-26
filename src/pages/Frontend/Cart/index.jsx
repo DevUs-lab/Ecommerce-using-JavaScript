@@ -65,7 +65,7 @@ const Cart = () => {
                 deliveryCharge,
                 grandTotal,
                 paymentMethod,
-                status: "Pending",
+                status: "pending",
                 createdAt: serverTimestamp(),
             });
 

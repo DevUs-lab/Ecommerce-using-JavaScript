@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { Spin } from "antd";
 
-const Orders = () => {
+const OrderDelivered = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -16,26 +16,6 @@ const Orders = () => {
         fetchOrders();
     }, []);
 
-    const markAsDelivered = async (orderId) => {
-        try {
-            const orderRef = doc(db, "orders", orderId);
-            await updateDoc(orderRef, {
-                status: "Delivered"
-            });
-
-            // update UI without reloading
-            setOrders(prev =>
-                prev.map(order =>
-                    order.id === orderId
-                        ? { ...order, status: "Delivered" }
-                        : order
-                )
-            );
-        } catch (error) {
-            console.error("Error updating status:", error);
-        }
-    };
-
 
     if (loading) {
         return <div className="min-vh-100 d-flex align-items-center justify-content-center"><Spin /></div>;
@@ -43,8 +23,8 @@ const Orders = () => {
 
     return (
         <div className="container ms-0 ms-md-4 ms-lg-0">
-            <h2>Orders</h2>
-            {orders.filter(order => order.status === "pending").map(order => (
+            <h2>Delivered Orders</h2>
+            {orders.filter(order => order.status === "Delivered").map(order => (
                 <div key={order.id} className="card mb-2 p-3">
                     <p><strong>Order ID:</strong> {order.id}</p>
                     <p><strong>Name:</strong> {order.customerName}</p>
@@ -59,23 +39,11 @@ const Orders = () => {
                     <p><strong>Total:</strong> Rs {order.total}</p>
                     <p><strong>Delivery Charge:</strong> Rs {order.deliveryCharge}</p>
                     <p><strong>Grand Total:</strong> Rs {order.grandTotal}</p>
-                    <p>
-                        <strong>Status:</strong> {order.status}
-
-                        {order.status !== "Delivered" && (
-                            <button
-                                className="btn btn-sm btn-primary ms-3"
-                                onClick={() => markAsDelivered(order.id)}
-                            >
-                                Mark as Delivered
-                            </button>
-                        )}
-                    </p>
-
+                    <p><strong>Status:</strong> {order.status}</p>
                 </div>
             ))}
         </div>
     );
 };
 
-export default Orders;
+export default OrderDelivered;

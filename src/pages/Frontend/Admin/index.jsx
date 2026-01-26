@@ -41,12 +41,18 @@ export default function AppRouter() {
                         }`}
                     style={{ width: "250px", zIndex: 9999 }}
                 >
-                    <div className="d-fle">
+                    <div className="d-flex align-content-center justify-content-center">
 
-                        <button className="btn btn-info mt-4" onClick={() => setSidebarOpen(false)}>
-                            back
-                        </button>
-                        <h3 className="text-center mb-4">Admin Panel</h3>
+                        <h3 className="text-center mb-0">Admin Panel</h3>
+                        {sidebarOpen && (
+                            <button
+                                className="btn btn-info ms-2"
+                                onClick={() => setSidebarOpen(false)}
+                            >
+                                ←
+                            </button>
+                        )}
+
                     </div>
 
                     <Link
@@ -56,10 +62,18 @@ export default function AppRouter() {
                     >
                         Dashboard
                     </Link>
-                    <Link to="/admin/orders" className="d-block py-2 text-decoration-none text-white">
+                    <Link
+                        to="/admin/orders"
+                        className="d-block py-2 text-white text-decoration-none"
+                        onClick={() => setSidebarOpen(false)}
+                    >
                         Orders
                     </Link>
 
+                    <Link to="/admin/order-delivered" onClick={() => setSidebarOpen(false)}
+                        className="d-block py-2 text-decoration-none text-white">
+                        Order Delivered
+                    </Link>
                     <Link
                         to="/admin/users"
                         className="d-block py-2 text-white text-decoration-none"
@@ -100,11 +114,15 @@ export default function AppRouter() {
 
                 {/* Content */}
                 <div
-                    className="col-12 col-md-9 offset-md-3 p-4 bg-light min-vh-100"
-                    style={{ minHeight: "100vh" }}
+                    className="p-4 bg-light min-vh-100"
+                    style={{
+                        marginLeft: sidebarOpen || window.innerWidth >= 768 ? "250px" : "0",
+                        transition: "margin-left 0.3s ease",
+                    }}
                 >
                     <Outlet />
                 </div>
+
             </div>
         </div>
     );
