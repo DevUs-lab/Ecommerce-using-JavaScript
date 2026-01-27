@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
-import { message } from 'antd';
+import { AntdMess } from '../../Components/Antd';
 // import CartModal from '../../Components/CartModal';
 
 const Contact = () => {

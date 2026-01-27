@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase/config";
-import { Spin } from "antd";
+import AntdSpin from "../../../Components/Antd";
 
 const OrderDelivered = () => {
     const [orders, setOrders] = useState([]);
@@ -18,13 +18,13 @@ const OrderDelivered = () => {
 
 
     if (loading) {
-        return <div className="min-vh-100 d-flex align-items-center justify-content-center"><Spin /></div>;
+        return <AntdSpin fullscreen tip="Loading delivered orders..." />;
     }
 
     return (
         <div className="container ms-0 ms-md-4 ms-lg-0">
             <h2>Delivered Orders</h2>
-            {orders.filter(order => order.status === "Delivered").map(order => (
+            {orders.filter(order => order.status === "delivered").map(order => (
                 <div key={order.id} className="card mb-2 p-3">
                     <p><strong>Order ID:</strong> {order.id}</p>
                     <p><strong>Name:</strong> {order.customerName}</p>

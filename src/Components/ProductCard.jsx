@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { message } from 'antd';
+import { AntdMess } from './Antd';
 import './productCard.css';
 
 const ProductCard = ({ product }) => {
@@ -15,21 +15,21 @@ const ProductCard = ({ product }) => {
 
     const handleAddToCart = () => {
         if (product.stock <= 0) {
-            message.error("Out of stock");
+            AntdMess({ type: "error", messageText: "Out of stock" });
             return;
         }
         addToCart(product, quantity);
-        message.success("Item added to cart");
+        AntdMess({ type: "success", messageText: "Item added to cart" });
     };
 
 
     const handleShopNow = () => {
         if (product.stock <= 0) {
-            message.error("Out of stock");
+            AntdMess({ type: "error", messageText: "Out of stock" });
             return;
         }
         addToCart(product, quantity);
-        message.success("Proceeding to checkout");
+        AntdMess({ type: "success", messageText: "Proceeding to checkout" });
         navigate('/cart');
     };
 

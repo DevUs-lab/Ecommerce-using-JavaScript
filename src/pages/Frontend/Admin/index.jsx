@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../../firebase/config";
-import { Spin } from "antd";
+import AntdSpin from "../../../Components/Antd";
+import "./index.css"
 
 export default function AppRouter() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(false); // mobile toggle
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,101 +30,67 @@ export default function AppRouter() {
         navigate("/adminlogin");
     };
 
-    if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-        <Spin size="large" /></div>;
+    if (loading) {
+        return (
+            <AntdSpin fullscreen size="large" tip="Authenticating..." />
+        );
+    }
 
     return (
-        <div className="container-fluid">
-            <div className="row min-vh-100">
-
-                <div
-                    className={`bg-dark text-white p-4 position-fixed top-0 start-0 vh-100 overflow-auto ${sidebarOpen ? "d-block" : "d-none d-md-block"
-                        }`}
-                    style={{ width: "250px", zIndex: 9999 }}
-                >
-                    <div className="d-flex align-content-center justify-content-center">
-
-                        <h3 className="text-center mb-0">Admin Panel</h3>
-                        {sidebarOpen && (
-                            <button
-                                className="btn btn-info ms-2"
-                                onClick={() => setSidebarOpen(false)}
-                            >
-                                ←
-                            </button>
-                        )}
-
-                    </div>
-
-                    <Link
-                        to="/admin"
-                        className="d-block py-2 text-white text-decoration-none"
+        <div className="d-flex min-vh-100">
+            {/* Sidebar */}
+            <aside
+                className={`bg-dark text-white p-4 sidebar ${sidebarOpen ? "open" : ""
+                    }`}
+            >
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h4 className="mb-0">Admin Panel</h4>
+                    <button
+                        className="btn btn-sm btn-light d-md-none"
                         onClick={() => setSidebarOpen(false)}
                     >
-                        Dashboard
-                    </Link>
-                    <Link
-                        to="/admin/orders"
-                        className="d-block py-2 text-white text-decoration-none"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        Orders
-                    </Link>
-
-                    <Link to="/admin/order-delivered" onClick={() => setSidebarOpen(false)}
-                        className="d-block py-2 text-decoration-none text-white">
-                        Order Delivered
-                    </Link>
-                    <Link
-                        to="/admin/users"
-                        className="d-block py-2 text-white text-decoration-none"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        Users
-                    </Link>
-                    <Link
-                        to="/admin/add-products"
-                        className="d-block py-2 text-white text-decoration-none"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        Add-Products
-                    </Link>
-                    <Link
-                        to="/admin/settings"
-                        className="d-block py-2 text-white text-decoration-none"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        Settings
-                    </Link>
-
-                    <button className="btn btn-danger mt-4 w-100" onClick={handleLogout}>
-                        Logout
+                        ✕
                     </button>
                 </div>
 
-                {/* Mobile toggle button */}
-                <div className="mx-auto d-flex align-items-center justify-content-center text-center">
+                <nav className="d-flex flex-column gap-2">
+                    <Link to="/admin" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Dashboard</Link>
+                    <Link to="/admin/orders-pending" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Orders Pending</Link>
+                    <Link to="/admin/order-delivered" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Orders Delivered</Link>
+                    <Link to="/admin/users" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Users</Link>
+                    <Link to="/admin/add-products" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Add Products</Link>
+                    <Link to="/admin/settings" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Settings</Link>
+                </nav>
 
+                <button className="btn btn-danger mt-4 w-100" onClick={handleLogout}>
+                    Logout
+                </button>
+            </aside>
+
+            {/* Overlay (mobile only) */}
+            {sidebarOpen && (
+                <div
+                    className="sidebar-overlay d-md-none"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
+            {/* Main Content */}
+            <main className="flex-grow-1 bg-light">
+                {/* Mobile top bar */}
+                <div className="d-md-none p-3 bg-dark text-white">
                     <button
-                        className="btn btn-dark d-md-none w-75 top-0 start-0 m-2"
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className="btn btn-light"
+                        onClick={() => setSidebarOpen(true)}
                     >
                         ☰
                     </button>
                 </div>
 
-                {/* Content */}
-                <div
-                    className="p-4 bg-light min-vh-100"
-                    style={{
-                        marginLeft: sidebarOpen || window.innerWidth >= 768 ? "250px" : "0",
-                        transition: "margin-left 0.3s ease",
-                    }}
-                >
+                <div className="p-4">
                     <Outlet />
                 </div>
-
-            </div>
+            </main>
         </div>
     );
 }

@@ -1,10 +1,10 @@
-import { message, Spin } from 'antd'
 import { setDoc, doc, deleteDoc, updateDoc, serverTimestamp, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
 import { getProducts } from '../../../Context/getProducts';
+import AntdSpin, { AntdMess } from '../../../Components/Antd';
 
-const Products = () => {
+const AddProducts = () => {
     const initialstate = {
         productName: '',
         descriptions: '',
@@ -36,7 +36,7 @@ const Products = () => {
 
         setCategoriesloading(true);
         if (!categoryName) {
-            message.error("Category name required");
+            AntdMess({ type: "error", messageText: "Category name required" });
             setCategoriesloading(false);
 
             return;
@@ -50,12 +50,12 @@ const Products = () => {
                 createdAt: serverTimestamp()
             });
 
-            message.success("Category added");
+            AntdMess({ type: "success", messageText: "Category added" });
             setCategoryName("");
             fetchProducts(); // IMPORTANT
         } catch (error) {
             console.log("Failed to add category", error);
-            message.error("Failed to add category");
+            AntdMess({ type: "error", messageText: "Failed to add category" });
         } finally {
             setCategoriesloading(false);
         }
@@ -78,7 +78,7 @@ const Products = () => {
 
             if (!editId) {
                 if (images.length === 0) {
-                    message.error("Please select at least one image")
+                    AntdMess({ type: "error", messageText: "Please select at least one image" });
                     setLoading(false);
                     return
 
@@ -104,7 +104,7 @@ const Products = () => {
                 })
 
 
-                message.success("Product added successfully")
+                AntdMess({ type: "success", messageText: "Product added successfully" });
                 fetchProducts();
                 setProducts(initialstate)
                 setImages([])
@@ -132,7 +132,7 @@ const Products = () => {
 
                 await updateDoc(doc(db, "products", editId), updatedData);
 
-                message.success("Product updated");
+                AntdMess({ type: "success", messageText: "Product updated" });
                 fetchProducts();
                 setEditId(null);
                 setProducts(initialstate);
@@ -141,7 +141,7 @@ const Products = () => {
             }
         } catch (error) {
             console.log(error)
-            message.error("Failed to add product")
+            AntdMess({ type: "error", messageText: "Failed to add product" });
         }
         setLoading(false)
 
@@ -182,7 +182,7 @@ const Products = () => {
             setProductsList(productsData)
 
             if (productsData.length === 0) {
-                message.info("No products found")
+                AntdMess({ type: "info", messageText: "No products found" });
             }
 
             // CATEGORIES
@@ -195,7 +195,7 @@ const Products = () => {
 
         } catch (error) {
             console.log("error", error)
-            message.error("Failed to fetch data")
+            AntdMess({ type: "error", messageText: "Failed to fetch data" });
         } finally {
             setFetching(false)
         }
@@ -209,9 +209,9 @@ const Products = () => {
             setProductsList(prev =>
                 prev.filter(p => p.id !== item.id)
             );
-            message.success("Product deleted");
+            AntdMess({ type: "success", messageText: "Product deleted" });
         } catch {
-            message.error("Delete failed");
+            AntdMess({ type: "error", messageText: "Delete failed" });
         }
         setDeletingId(null);
     };
@@ -238,28 +238,28 @@ const Products = () => {
         const hasProducts = productsList.some(p => p.category === id);
         setDeletingCat(id);
         if (hasProducts) {
-            message.error("Cannot delete category with products. Delete products first.");
+            AntdMess({ type: "error", messageText: "Cannot delete category with products." });
+            setDeletingCat(null);
             return;
         }
+
         if (!window.confirm("Are you sure you want to delete this category?")) return;
 
         try {
             await deleteDoc(doc(db, "categories", id));
-            message.success("Category deleted");
+            AntdMess({ type: "success", messageText: "Category deleted" });
             fetchProducts();
         } catch (error) {
             console.log(error);
-            message.error("Failed to delete category");
+            AntdMess({ type: "error", messageText: "Failed to delete category" });
         }
         setDeletingCat(null);
     };
 
-
-
     return (
         <div className='container'>
             <div className="row">
-                <div className="col">
+                <div className="col-12">
                     <h2 className="text-center py-5">Add Category</h2>
                     <form onSubmit={handleAddCategory}>
 
@@ -363,57 +363,61 @@ const Products = () => {
             </div >
 
             <div className="row mt-5">
-                {fetching && <div className='d-flex justify-content-center align-items-center min-vh-100'><Spin size='large' /></div>}
+                {fetching ? (
+                    <div className="col-md-4 text-center py-5">
+                        <AntdSpin size="large" tip="Loading products..." />
+                    </div>
+                ) : (
+                    productsList.map((item) => (
+                        <div className="col-md-4 py-3" key={item.id}>
+                            <div className="card">
+                                <img src={item.imageUrl} className="card-img-top" />
+                                <div className='py-4'>
+                                    <div className="card-body">
+                                        <h5>{item.productName}</h5>
+                                        <p>{item.descriptions}</p>
+                                        <p>Price: {item.sellPrice} <span>del: <del>{item.delPrice}</del></span></p>
+                                        <p>Stock: {item.stock}</p>
+                                        <p className="text-muted">
+                                            Added on:{" "}
+                                            {item.createdAt
+                                                ? item.createdAt.toDate
+                                                    ? item.createdAt.toDate().toLocaleString("en-GB", {
+                                                        dateStyle: "medium",
+                                                        timeStyle: "short"
+                                                    })
+                                                    : new Date(item.createdAt).toLocaleString("en-GB", {
+                                                        dateStyle: "medium",
+                                                        timeStyle: "short"
+                                                    })
+                                                : "N/A"}
+                                        </p>
 
-                {productsList.map((item) => (
-                    <div className="col-md-4 py-3" key={item.id}>
-                        <div className="card">
-                            <img src={item.imageUrl} className="card-img-top" />
-                            <div className='py-4'>
-                                <div className="card-body">
-                                    <h5>{item.productName}</h5>
-                                    <p>{item.descriptions}</p>
-                                    <p>Price: {item.sellPrice} <span>del: <del>{item.delPrice}</del></span></p>
-                                    <p>Stock: {item.stock}</p>
-                                    <p className="text-muted">
-                                        Added on:{" "}
-                                        {item.createdAt
-                                            ? item.createdAt.toDate
-                                                ? item.createdAt.toDate().toLocaleString("en-GB", {
-                                                    dateStyle: "medium",
-                                                    timeStyle: "short"
-                                                })
-                                                : new Date(item.createdAt).toLocaleString("en-GB", {
-                                                    dateStyle: "medium",
-                                                    timeStyle: "short"
-                                                })
-                                            : "N/A"}
-                                    </p>
+                                    </div>
+                                    <div className='text-center ms-auto d-flex justify-content-center gap-3 mb-3'>
+                                        {
+                                            <button
+                                                className="btn btn-danger"
+                                                disabled={deletingId === item.id}
+                                                onClick={() => handleDelete(item)}
+                                            >
+                                                {deletingId === item.id ? "Deleting..." : "Delete"}
+                                            </button>
+
+                                        }
+                                        <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
+                                    </div>
+
 
                                 </div>
-                                <div className='text-center ms-auto d-flex justify-content-center gap-3 mb-3'>
-                                    {
-                                        <button
-                                            className="btn btn-danger"
-                                            disabled={deletingId === item.id}
-                                            onClick={() => handleDelete(item)}
-                                        >
-                                            {deletingId === item.id ? "Deleting..." : "Delete"}
-                                        </button>
-
-                                    }
-                                    <button className='btn btn-warning' onClick={() => handleEdit(item)}>Edit</button>
-                                </div>
-
-
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
 
         </div >
     )
 }
 
-export default Products
+export default AddProducts

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
-import { Spin, message } from "antd";
+import AntdSpin, { AntdMess } from "./Antd";
 import { useCart } from "../Context/CartContext";
 import Navbar from "./Header/Navbar";
 import Footer from "./Footer/Footer";
@@ -31,11 +31,11 @@ const ProductDetail = () => {
                         : data.imageUrl;
                     setCurrentImage(initialImage);
                 } else {
-                    message.error("Product not found");
+                    AntdMess({ type: "error", messageText: "Product not found" });
                 }
             } catch (error) {
                 console.error(error);
-                message.error("Failed to load product");
+                AntdMess({ type: "error", messageText: "Failed to load product" });
             } finally {
                 setLoading(false);
             }
@@ -46,13 +46,13 @@ const ProductDetail = () => {
     const handleAddToCart = () => {
         if (!product) return;
         addToCart(product, quantity);
-        message.success(`${product.productName} added to cart!`);
+        AntdMess({ type: "success", messageText: `${product.productName} added to cart!` });
     };
 
     const handleBuyNow = () => {
         if (!product) return;
         addToCart(product, quantity);
-        message.success("Proceeding to checkout");
+        AntdMess({ type: "success", messageText: "Proceeding to checkout" });
         navigate("/cart");
     };
 
@@ -70,9 +70,7 @@ const ProductDetail = () => {
 
     if (loading) {
         return (
-            <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh" }}>
-                <Spin size="large" />
-            </div>
+            <AntdSpin fullscreen messageText="Loading product details..." />
         );
     }
 

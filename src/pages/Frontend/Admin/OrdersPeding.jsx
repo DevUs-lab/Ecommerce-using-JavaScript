@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/config";
-import { Spin } from "antd";
+import AntdSpin from "../../../Components/Antd";
 
-const Orders = () => {
+const OrdersPending = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -20,14 +20,14 @@ const Orders = () => {
         try {
             const orderRef = doc(db, "orders", orderId);
             await updateDoc(orderRef, {
-                status: "Delivered"
+                status: "delivered"
             });
 
             // update UI without reloading
             setOrders(prev =>
                 prev.map(order =>
                     order.id === orderId
-                        ? { ...order, status: "Delivered" }
+                        ? { ...order, status: "delivered" }
                         : order
                 )
             );
@@ -38,7 +38,7 @@ const Orders = () => {
 
 
     if (loading) {
-        return <div className="min-vh-100 d-flex align-items-center justify-content-center"><Spin /></div>;
+        return <AntdSpin fullscreen tip="Loading orders..." />;
     }
 
     return (
@@ -62,7 +62,7 @@ const Orders = () => {
                     <p>
                         <strong>Status:</strong> {order.status}
 
-                        {order.status !== "Delivered" && (
+                        {order.status !== "delivered" && (
                             <button
                                 className="btn btn-sm btn-primary ms-3"
                                 onClick={() => markAsDelivered(order.id)}
@@ -78,4 +78,4 @@ const Orders = () => {
     );
 };
 
-export default Orders;
+export default OrdersPending;

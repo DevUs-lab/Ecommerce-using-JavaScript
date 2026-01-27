@@ -8,10 +8,11 @@ import AddProducts from "./Frontend/Admin/AddProducts";
 import Settings from "./Frontend/Admin/Settings";
 import ProductDetail from "../Components/ProductDetail";
 import AdminLogin from "./Frontend/Admin/AdminLogin";
-import Orders from "./Frontend/Admin/Orders";
 import FAQs from "./Frontend/FAQs";
 import PrivacyPolicy from "./Frontend/PrivacyPolicy";
 import Terms from "./Frontend/Terms";
+import OrderDelivered from "./Frontend/Admin/OrderDelivered";
+import OrdersPending from "./Frontend/Admin/OrdersPeding";
 
 const Index = () => {
     return (
@@ -26,7 +27,8 @@ const Index = () => {
 
             <Route path="/admin/*" element={<Admin />}>
                 <Route index element={<Dashboard />} />
-                <Route path="orders" element={<Orders />} />
+                <Route path="orders-pending" element={<OrdersPending />} />
+                <Route path="order-delivered" element={<OrderDelivered />} />
                 <Route path="users/" element={<Users />} />
                 <Route path="add-products/" element={<AddProducts />} />
                 <Route path="settings/" element={<Settings />} />

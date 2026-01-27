@@ -4,7 +4,7 @@ import Footer from '../../../Components/Footer/Footer';
 import ProductCard from '../../../Components/ProductCard';
 // import CartModal from '../../../Components/CartModal';
 import { getProducts } from '../../../Context/getProducts';
-import { message, Spin } from 'antd';
+import AntdSpin, { AntdMess } from '../../../Components/Antd';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -30,7 +30,7 @@ const Home = () => {
                 setProducts(activeProducts);
             } catch (error) {
                 console.log(error);
-                message.error("Failed to fetch products");
+                AntdMess({ type: "error", messageText: "Failed to fetch products" });
             }
             setLoading(false);
         };
@@ -67,11 +67,7 @@ const Home = () => {
                         Featured Products
                     </h2>
 
-                    {loading && (
-                        <div className="flex text-center py-5 justify-center">
-                            <Spin size="large" />
-                        </div>
-                    )}
+                    {loading && <AntdSpin tip="Loading products..." />}
 
                     {!loading && products.length > 0 && (
                         <div className="container">

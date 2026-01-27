@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from '../../../firebase/config';
-import { message } from 'antd';
+import { AntdMess } from '../../../Components/Antd';
 
 const Settings = () => {
     const [deliveryCharge, setDeliveryCharge] = useState(0);
@@ -18,7 +18,7 @@ const Settings = () => {
                 }
             } catch (error) {
                 console.error("Error fetching settings:", error);
-                message.error("Failed to load settings");
+                AntdMess({ type: "error", messageText: "Failed to load settings" });
             } finally {
                 setFetching(false);
             }
@@ -32,10 +32,10 @@ const Settings = () => {
         try {
             const docRef = doc(db, "globalSettings", "storeInfo");
             await setDoc(docRef, { deliveryCharge: Number(deliveryCharge) }, { merge: true });
-            message.success("Settings saved successfully");
+            AntdMess({ type: "success", messageText: "Settings saved successfully" });
         } catch (error) {
             console.error("Error saving settings:", error);
-            message.error("Failed to save settings");
+            AntdMess({ type: "error", messageText: "Failed to save settings" });
         } finally {
             setLoading(false);
         }

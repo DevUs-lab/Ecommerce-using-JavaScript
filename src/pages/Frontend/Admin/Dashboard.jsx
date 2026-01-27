@@ -3,6 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { getProducts } from "../../../Context/getProducts";
 import { useNavigate } from "react-router-dom";
+import AntdSpin from "../../../Components/Antd";
 
 export default function Dashboard() {
     const [stats, setStats] = useState({
@@ -31,8 +32,14 @@ export default function Dashboard() {
                 const ordersData = ordersSnapshot.docs.map(doc => doc.data());
 
                 const totalOrders = ordersData.length;
-                const completedOrders = ordersData.filter(o => o.status === "Delivered" || o.status === "Completed").length;
-                const pendingOrders = ordersData.filter(o => o.status === "Pending").length;
+                const completedOrders = ordersData.filter(
+                    o => o.status === "delivered"
+                ).length;
+
+                const pendingOrders = ordersData.filter(
+                    o => o.status === "pending"
+                ).length;
+
 
                 setStats({
                     totalUsers: 120, // Keep hardcoded or implement user fetch if needed
@@ -54,7 +61,11 @@ export default function Dashboard() {
     }, []);
 
     if (loading) {
-        return <div className="p-4">Loading Dashboard...</div>;
+        return <div style={{
+            background: "white",
+            minHeight: "100vh",
+            textAlign: "center"
+        }}><AntdSpin fullscreen /></div>;
     }
 
     return (
