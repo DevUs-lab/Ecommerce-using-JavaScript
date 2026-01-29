@@ -4,7 +4,7 @@ import Footer from '../../../Components/Footer/Footer';
 import ProductCard from '../../../Components/ProductCard';
 // import CartModal from '../../../Components/CartModal';
 import { getProducts } from '../../../Context/getProducts';
-import AntdSpin, { AntdMess } from '../../../Components/Antd';
+import { Spin } from 'antd';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -67,7 +67,11 @@ const Home = () => {
                         Featured Products
                     </h2>
 
-                    {loading && <AntdSpin tip="Loading products..." />}
+                    {loading && (
+                        <div className="d-flex align-items-center justify-content-center py-5" style={{ minHeight: "50vh" }}>
+                            <Spin tip="Loading products..." />
+                        </div>
+                    )}
 
                     {!loading && products.length > 0 && (
                         <div className="container">

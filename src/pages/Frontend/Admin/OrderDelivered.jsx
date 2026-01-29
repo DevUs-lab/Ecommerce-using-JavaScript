@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase/config";
-import AntdSpin from "../../../Components/Antd";
+import { Spin } from "antd";
 
 const OrderDelivered = () => {
     const [orders, setOrders] = useState([]);
@@ -18,7 +18,9 @@ const OrderDelivered = () => {
 
 
     if (loading) {
-        return <AntdSpin fullscreen tip="Loading delivered orders..." />;
+        return <div className="d-flex justify-content-center align-items-center" style={{
+            minHeight: "100vh",
+        }}><Spin /></div>;
     }
 
     return (

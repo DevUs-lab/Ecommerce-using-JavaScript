@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { getProducts } from "../../../Context/getProducts";
 import { useNavigate } from "react-router-dom";
-import AntdSpin from "../../../Components/Antd";
+import { Spin } from "antd";
 
 export default function Dashboard() {
     const [stats, setStats] = useState({
@@ -61,11 +61,9 @@ export default function Dashboard() {
     }, []);
 
     if (loading) {
-        return <div style={{
-            background: "white",
+        return <div className="d-flex justify-content-center align-items-center" style={{
             minHeight: "100vh",
-            textAlign: "center"
-        }}><AntdSpin fullscreen /></div>;
+        }}><Spin /></div>;
     }
 
     return (

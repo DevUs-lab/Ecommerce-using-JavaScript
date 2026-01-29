@@ -2,7 +2,8 @@ import { setDoc, doc, deleteDoc, updateDoc, serverTimestamp, collection, getDocs
 import React, { useEffect, useRef, useState } from 'react'
 import { db } from '../../../firebase/config';
 import { getProducts } from '../../../Context/getProducts';
-import AntdSpin, { AntdMess } from '../../../Components/Antd';
+import { Spin } from "antd";
+import { AntdMess } from "../../../Components/Antd";
 
 const AddProducts = () => {
     const initialstate = {
@@ -15,7 +16,7 @@ const AddProducts = () => {
     }
 
     const [categoriesloading, setCategoriesloading] = useState(false);
-    const [deletingCat, setDeletingCat] = useState(false);
+    const [deletingCat, setDeletingCat] = useState(null);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
@@ -25,6 +26,7 @@ const AddProducts = () => {
     const [editId, setEditId] = useState(null);
     const [categoryName, setCategoryName] = useState("");
     const [categories, setCategories] = useState([]);
+    const [categoriesFetching, setCategoriesFetching] = useState(false);
 
 
     const makeSlug = (text) =>
@@ -175,6 +177,7 @@ const AddProducts = () => {
 
     const fetchProducts = async () => {
         setFetching(true)
+        setCategoriesFetching(true);
 
         try {
             // PRODUCTS
@@ -198,6 +201,8 @@ const AddProducts = () => {
             AntdMess({ type: "error", messageText: "Failed to fetch data" });
         } finally {
             setFetching(false)
+            setCategoriesFetching(false);
+
         }
 
     }
@@ -243,7 +248,7 @@ const AddProducts = () => {
             return;
         }
 
-        if (!window.confirm("Are you sure you want to delete this category?")) return;
+        if (!window.confirm("Are you sure you want to delete this category?")) { setDeletingCat(null); return };
 
         try {
             await deleteDoc(doc(db, "categories", id));
@@ -267,35 +272,43 @@ const AddProducts = () => {
                             type="text"
                             className="form-control"
                             placeholder="Category Name"
-                            value={categoryName}
+                            value={categoryName} disabled={categoriesloading}
                             onChange={(e) => setCategoryName(e.target.value)}
                         />
-
-                        <div className="text-center mt-3">
+                        <div className="text-center mt-2">
                             <button className="btn btn-primary" disabled={categoriesloading}>
-                                {categoriesloading ? "Adding..." : "Add Category"}
+                                {categoriesloading ? <Spin size="small" /> : "Add Category"}
                             </button>
                         </div>
+
                     </form>
                     <h5 className="mt-4">Manage Categories</h5>
 
                     <ul className="list-group">
-                        {categories.map(cat => (
-                            <li
-                                key={cat.id}
-                                className="list-group-item d-flex justify-content-between align-items-center"
-                            >
-                                <span>{cat.name}</span>
-
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => handleDeleteCategory(cat.id)}
-                                    disabled={deletingCat === cat.id}
+                        {categoriesFetching ? (
+                            <div className="d-flex justify-content-center py-3">
+                                <Spin />
+                            </div>
+                        ) :
+                            categories.map(cat => (
+                                <li
+                                    key={cat.id}
+                                    className="list-group-item d-flex justify-content-between align-items-center"
                                 >
-                                    {deletingCat === cat.id ? "Deleting..." : "Delete"}
-                                </button>
-                            </li>
-                        ))}
+                                    <span>{cat.name}</span>
+
+                                    <button
+                                        className="btn btn-sm btn-danger"
+                                        onClick={() => handleDeleteCategory(cat.id)}
+                                        disabled={deletingCat === cat.id}
+                                    >
+                                        {deletingCat === cat.id ? <span className="d-flex align-items-center gap-2">
+                                            <Spin size="small" />
+                                            Deleting...
+                                        </span> : "Delete"}
+                                    </button>
+                                </li>
+                            ))}
                     </ul>
 
                 </div>
@@ -364,8 +377,8 @@ const AddProducts = () => {
 
             <div className="row mt-5">
                 {fetching ? (
-                    <div className="col-md-4 text-center py-5">
-                        <AntdSpin size="large" tip="Loading products..." />
+                    <div className="d-flex align-items-center justify-content-center py-5">
+                        <Spin size="large" tip="Loading products..." />
                     </div>
                 ) : (
                     productsList.map((item) => (

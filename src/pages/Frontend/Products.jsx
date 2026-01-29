@@ -4,7 +4,7 @@ import Footer from '../../Components/Footer/Footer';
 // import CartModal from '../../Components/CartModal';
 import ProductCard from '../../Components/ProductCard.jsx';
 import { getProducts } from '../../Context/getProducts.jsx';
-import AntdSpin from '../../Components/Antd.jsx';
+import { Spin } from 'antd';
 
 const Products = () => {
 
@@ -43,7 +43,12 @@ const Products = () => {
                             Featured Products
                         </h2>
 
-                        {loading && <AntdSpin tip="Loading products..." />}
+                        {loading && (
+                            <div className="d-flex align-items-center justify-content-center py-5" style={{ minHeight: "50vh" }}>
+                                <Spin tip="Loading products..." />
+                            </div>
+                        )}
+
 
                         {!loading && products.length > 0 && (
                             <div className="container">
