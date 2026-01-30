@@ -5,6 +5,7 @@ import ProductCard from '../../../Components/ProductCard';
 // import CartModal from '../../../Components/CartModal';
 import { getProducts } from '../../../Context/getProducts';
 import { Spin } from 'antd';
+import { AntdMess } from '../../../Components/Antd';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -48,9 +49,9 @@ const Home = () => {
                     <div className="container">
                         <div className="row align-items-center">
                             <div className="col-lg-6 text-white">
-                                <h1 className="display-4 fw-bold">Welcome to Umair Store</h1>
+                                <h1 className="display-4 fw-bold">Welcome to Easy Store</h1>
                                 <p className="lead">Your one-stop shop for the best tech gadgets.</p>
-                                <a href="#products" className="btn btn-light btn-lg rounded-0 text-dark fw-bold px-4">Shop Now</a>
+                                {/* <a href="#products" className="btn btn-light btn-lg rounded-0 text-dark fw-bold px-4">Shop Now</a> */}
                             </div>
                         </div>
                     </div>
