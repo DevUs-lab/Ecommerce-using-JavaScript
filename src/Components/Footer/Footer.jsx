@@ -47,9 +47,10 @@ const Footer = () => {
 
             {/* Bottom Bar */}
             <div className="footer-bottom text-center py-3">
-                <small className="text-white-50">
-                    <p>Delevolp by Umair Saeed (DevusPk) Contact: <a href="mailto:umairdevus@gmail.com" className="text-decoration-none">umairdevus@gmail.com</a>.</p>   © {year} All Rights Reserved.
-                </small>
+                <p className="text-white-50 small">
+                    Developed by Umair Saeed (DevusPk). Contact: <a href="mailto:umairdevus@gmail.com"
+                        className="text-decoration-none"> umairdevus@gmail.com</a>.<br />  © {year} All Rights Reserved.
+                </p>
             </div>
         </footer>
     );
