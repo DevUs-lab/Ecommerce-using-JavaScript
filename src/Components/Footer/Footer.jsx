@@ -14,7 +14,7 @@ const Footer = () => {
                     <div className="col-12 col-md-6 col-lg-4">
                         <h5 className="mb-3">
                             <Link to="/" className="text-decoration-none text-light">
-                                Umair Store
+                                Need Buy Store
                             </Link>
                         </h5>
                         <p className="text-white-50 small">
@@ -48,7 +48,7 @@ const Footer = () => {
             {/* Bottom Bar */}
             <div className="footer-bottom text-center py-3">
                 <small className="text-white-50">
-                    © {year} Umair Store. All Rights Reserved.
+                    <p>Delevolp by Umair Saeed (DevusPk) Contact: <a href="mailto:umairdevus@gmail.com" className="text-decoration-none">umairdevus@gmail.com</a>.</p>   © {year} All Rights Reserved.
                 </small>
             </div>
         </footer>

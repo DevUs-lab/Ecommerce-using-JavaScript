@@ -64,7 +64,7 @@ const ProductCard = ({ product }) => {
                                 {product.productName}
                             </h6>
 
-                            <p className="text-muted mb-1 d-none d-md-block product-description">
+                            <p onClick={() => navigate(`/product/${product.id}`)} className="text-muted mb-1 d-none d-md-block product-description text-truncate" style={{ maxWidth: "100%" }}>
                                 {product.descriptions}
                             </p>
 

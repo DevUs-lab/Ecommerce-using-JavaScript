@@ -49,7 +49,7 @@ const Home = () => {
                     <div className="container">
                         <div className="row align-items-center">
                             <div className="col-lg-6 text-white">
-                                <h1 className="display-4 fw-bold">Welcome to Easy Store</h1>
+                                <h1 className="display-4 fw-bold">Welcome to Need Buy Store</h1>
                                 <p className="lead">Your one-stop shop for the best tech gadgets.</p>
                                 {/* <a href="#products" className="btn btn-light btn-lg rounded-0 text-dark fw-bold px-4">Shop Now</a> */}
                             </div>
