@@ -378,7 +378,7 @@ const AddProducts = () => {
             <div className="row mt-5">
                 {fetching ? (
                     <div className="d-flex align-items-center justify-content-center py-5">
-                        <Spin size="large" tip="Loading products..." />
+                        <Spin size="large" />
                     </div>
                 ) : (
                     productsList.map((item) => (

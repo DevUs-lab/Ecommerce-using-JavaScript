@@ -32,7 +32,7 @@ export default function AppRouter() {
 
     if (loading) {
         return (
-            <AntdSpin fullscreen size="large" tip="Authenticating..." />
+            <AntdSpin fullscreen size="large"/>
         );
     }
 

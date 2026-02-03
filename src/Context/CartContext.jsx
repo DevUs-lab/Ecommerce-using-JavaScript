@@ -11,6 +11,7 @@ export const CartProvider = ({ children }) => {
     });
 
     const [deliveryCharge, setDeliveryCharge] = useState(null);
+    const [onlinePaymentDiscount, setOnlinePaymentDiscount] = useState(0);
 
     // 🔹 FETCH SETTINGS
     useEffect(() => {
@@ -20,6 +21,7 @@ export const CartProvider = ({ children }) => {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     setDeliveryCharge(docSnap.data().deliveryCharge || 0);
+                    setOnlinePaymentDiscount(docSnap.data().onlinePaymentDiscount || 0);
                 }
             } catch (error) {
                 console.error("Failed to fetch delivery charge", error);
@@ -133,7 +135,8 @@ export const CartProvider = ({ children }) => {
             cartTotal,
             deliveryCharge,
             setDeliveryCharge, // Expose setter if needed, but better to fetch from DB
-            grandTotal
+            grandTotal,
+            onlinePaymentDiscount
         }}>
             {children}
         </CartContext.Provider>

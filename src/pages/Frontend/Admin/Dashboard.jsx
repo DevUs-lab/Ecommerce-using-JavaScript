@@ -72,7 +72,7 @@ export default function Dashboard() {
 
             <div className="row g-3">
                 {/* Orders Stats */}
-                <div className="col-md-4" onClick={() => navigate("/admin/orders")}>
+                <div className="col-md-4" onClick={() => navigate("/admin/orders-pending")}>
                     <div className="card p-3 shadow-sm border-0 bg-primary text-white">
                         <h5>Total Orders</h5>
                         <h2>{stats.totalOrders}</h2>

@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
                         <div className="card p-4 shadow-sm border-0">
                             <h4>1. Introduction</h4>
                             <p>
-                                Welcome to <strong>Umair Store</strong>. We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website.
+                                Welcome to <strong>Need Buy Store</strong>. We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website.
                             </p>
 
                             <h4>2. Information We Collect</h4>
@@ -55,7 +55,7 @@ const PrivacyPolicy = () => {
 
                             <h4>8. Contact Us</h4>
                             <p>
-                                If you have any questions about this Privacy Policy, please contact us at support@umairstore.com.
+                                If you have any questions about this Privacy Policy, please contact us at umairdevus@gmail.com.
                             </p>
                         </div>
 

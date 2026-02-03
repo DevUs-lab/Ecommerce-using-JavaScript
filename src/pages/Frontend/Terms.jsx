@@ -14,7 +14,7 @@ const Terms = () => {
                         <div className="card p-4 shadow-sm border-0">
                             <h4>1. Introduction</h4>
                             <p>
-                                These Terms and Conditions govern your use of <strong>Umair Store</strong>. By accessing or using our website, you agree to be bound by these terms. If you disagree with any part of these terms, please do not use our services.
+                                These Terms and Conditions govern your use of <strong>Need Buy Store</strong>. By accessing or using our website, you agree to be bound by these terms. If you disagree with any part of these terms, please do not use our services.
                             </p>
 
                             <h4>2. Products and Pricing</h4>
@@ -44,7 +44,7 @@ const Terms = () => {
 
                             <h4>7. Limitation of Liability</h4>
                             <p>
-                                To the fullest extent permitted by law, Umair Store shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.
+                                To the fullest extent permitted by law, Need Buy Store shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues.
                             </p>
 
                             <h4>8. Changes to Terms</h4>
@@ -54,7 +54,7 @@ const Terms = () => {
 
                             <h4>9. Governing Law</h4>
                             <p>
-                                These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which Umair Store operates, without regard to its conflict of law provisions.
+                                These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which Need Buy Store operates, without regard to its conflict of law provisions.
                             </p>
                         </div>
 

@@ -45,7 +45,7 @@ const Products = () => {
 
                         {loading && (
                             <div className="d-flex align-items-center justify-content-center py-5" style={{ minHeight: "50vh" }}>
-                                <Spin tip="Loading products..." />
+                                <Spin />
                             </div>
                         )}
 

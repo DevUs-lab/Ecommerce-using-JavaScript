@@ -19,11 +19,11 @@ const About = () => {
                         <div className="col-md-6 mt-4 mt-md-0">
                             <h3>Who We Are</h3>
                             <p className="text-muted">
-                                Welcome to Umair Store, your number one source for all things tech. We're dedicated to providing
+                                Welcome to Need Buy Store, your number one source for all things tech. We're dedicated to providing
                                 you the best of products, with a focus on dependability, customer service, and uniqueness.
                             </p>
                             <p className="text-muted">
-                                Founded in 2024, Umair Store has come a long way from its beginnings. When we first started out,
+                                Founded in 2024, Need Buy Store has come a long way from its beginnings. When we first started out,
                                 our passion for eco-friendly tech drove us to start our own business.
                             </p>
                         </div>

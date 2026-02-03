@@ -68,7 +68,7 @@ const ProductCard = ({ product }) => {
                                 {product.descriptions}
                             </p>
 
-                            <p className="fw-bold mb-2" style={{ color: "#0097a7" }}>
+                            <p className="fw-bold mb-2" onClick={() => navigate(`/product/${product.id}`)} style={{ color: "#0097a7" }}>
                                 Rs {product.sellPrice}
                                 <del className="ms-2 text-muted">
                                     Rs {product.delPrice}

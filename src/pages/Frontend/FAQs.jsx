@@ -22,7 +22,7 @@ const FAQs = () => {
                                 </h2>
                                 <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
                                     <div className="accordion-body">
-                                        At <strong>Umair Store</strong>, we specialize in best tech gadgets, including smartphones, accessories, smartwatches, and audio devices. We ensure high quality and genuine products for all our customers.
+                                        At <strong>Need Buy Store</strong>, we specialize in best tech gadgets, including smartphones, accessories, smartwatches, and audio devices. We ensure high quality and genuine products for all our customers.
                                     </div>
                                 </div>
                             </div>

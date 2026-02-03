@@ -5,6 +5,7 @@ import { AntdMess } from '../../../Components/Antd';
 
 const Settings = () => {
     const [deliveryCharge, setDeliveryCharge] = useState(0);
+    const [onlinePaymentDiscount, setOnlinePaymentDiscount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
 
@@ -15,6 +16,7 @@ const Settings = () => {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     setDeliveryCharge(docSnap.data().deliveryCharge || 0);
+                    setOnlinePaymentDiscount(docSnap.data().onlinePaymentDiscount || 0);
                 }
             } catch (error) {
                 console.error("Error fetching settings:", error);
@@ -31,7 +33,10 @@ const Settings = () => {
         setLoading(true);
         try {
             const docRef = doc(db, "globalSettings", "storeInfo");
-            await setDoc(docRef, { deliveryCharge: Number(deliveryCharge) }, { merge: true });
+            await setDoc(docRef, {
+                deliveryCharge: Number(deliveryCharge),
+                onlinePaymentDiscount: Number(onlinePaymentDiscount)
+            }, { merge: true });
             AntdMess({ type: "success", messageText: "Settings saved successfully" });
         } catch (error) {
             console.error("Error saving settings:", error);
@@ -63,6 +68,17 @@ const Settings = () => {
                                         min="0"
                                     />
                                     <div className="form-text">This amount will be added to the cart total.</div>
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Online Payment Discount (Rs)</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        value={onlinePaymentDiscount}
+                                        onChange={(e) => setOnlinePaymentDiscount(e.target.value)}
+                                        min="0"
+                                    />
+                                    <div className="form-text">This discount will be applied for online payment methods like EasyPaisa, JazzCash, and Bank Transfer.</div>
                                 </div>
                                 <button type="submit" className="btn btn-primary w-100" disabled={loading}>
                                     {loading ? "Saving..." : "Save Settings"}

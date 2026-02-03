@@ -1,9 +1,10 @@
-import { collection, addDoc, serverTimestamp, doc, updateDoc, increment as firestoreIncrement } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, increment as firestoreIncrement, writeBatch } from "firebase/firestore";
 import { useEffect } from "react";
 import React, { useState } from "react";
 import { useCart } from "../../../Context/CartContext";
 import Header from "../../../Components/Header";
 import { db } from "../../../firebase/config";
+import { AntdMess } from "../../../Components/Antd";
 
 const Cart = () => {
     const {
@@ -15,19 +16,31 @@ const Cart = () => {
         cartTotal,
         deliveryCharge,
         grandTotal,
+        onlinePaymentDiscount,
     } = useCart();
 
     const [fetchingDeliveryCharge, setFetchingDeliveryCharge] = useState(true);
     const [isOrderPlaced, setIsOrderPlaced] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
 
+    // useEffect(() => {
+    //     if (deliveryCharge !== null) {
+    //         setFetchingDeliveryCharge(false);
+    //     }
+    // }, [deliveryCharge]);
+
     useEffect(() => {
-        if (deliveryCharge !== null) {
+        const timer = setTimeout(() => {
             setFetchingDeliveryCharge(false);
+        }, 5000); // Fallback after 5 seconds
+
+        if (deliveryCharge !== null && deliveryCharge !== undefined) {
+            setFetchingDeliveryCharge(false);
+            clearTimeout(timer);
         }
+
+        return () => clearTimeout(timer);
     }, [deliveryCharge]);
-
-
 
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
@@ -37,61 +50,78 @@ const Cart = () => {
         const name = e.target.name.value;
         const address = e.target.address.value;
         const phone = e.target.phone.value;
-        // const paymentMethod = e.target.paymentMethod.value; // Already using state
 
         if (!name || !address || !phone) {
-            alert("Please fill all fields");
+            AntdMess({ type: "info", messageText: "Please fill all fields" });
+            setIsOrderPlaced(false);
+            return;
+        }
+
+        const phoneRegex = /^[0-9]{10,11}$/;
+        if (!phoneRegex.test(phone)) {
+            AntdMess({ type: "info", messageText: "Please enter a valid 10-11 digit phone number" });
             setIsOrderPlaced(false);
             return;
         }
 
         for (const item of cartItems) {
-            if (item.quantity > item.stock) {
-                alert(`Not enough stock for ${item.productName}`);
+            if (!item.stock || item.quantity > item.stock) {
+                AntdMess({
+                    type: "info",
+                    messageText: `Not enough stock for ${item.productName}. Available: ${item.stock || 0}`
+                });
                 setIsOrderPlaced(false);
                 return;
             }
         }
 
+        const discount = (paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash" || paymentMethod === "Bank Transfer") ? (onlinePaymentDiscount || 0) : 0;
+        const finalGrandTotal = grandTotal - discount;
 
         try {
-            const orderRef = await addDoc(collection(db, "orders"), {
-                userId: "guest", // replace with auth user if logged in
+            const batch = writeBatch(db);
+            const orderRef = doc(collection(db, "orders"));
+
+            batch.set(orderRef, {
+                userId: "guest",
                 customerName: name,
                 address,
                 phone,
                 items: cartItems,
                 total: cartTotal,
                 deliveryCharge,
-                grandTotal,
+                discount,
+                grandTotal: finalGrandTotal,
                 paymentMethod,
                 status: "pending",
                 createdAt: serverTimestamp(),
             });
 
-            // Iterate through cartItems and update stock
-            for (const item of cartItems) {
+            // Update stock in same batch
+            cartItems.forEach(item => {
                 const productRef = doc(db, "products", item.id);
-                await updateDoc(productRef, {
+                batch.update(productRef, {
                     stock: firestoreIncrement(-item.quantity)
                 });
-            }
+            });
 
-            let successMsg = "Order placed successfully! Order ID: " + orderRef.id;
+            await batch.commit();
+
+            let successMsg = `Order placed successfully! Order ID: ${orderRef.id}`;
             if (paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash") {
-                successMsg += "\n\nPlease send the amount to 03190609041 and WhatsApp the proof to the same number for confirmation.";
+                successMsg += `\n\nPlease send Rs ${finalGrandTotal} to 03190609041 and WhatsApp the proof for confirmation.`;
             } else if (paymentMethod === "Bank Transfer") {
-                successMsg += "\n\nPlease transfer the amount to Meezan Bank (Acc: 33020112425464) and WhatsApp the proof to 03190609041.";
+                successMsg += `\n\nPlease transfer Rs ${finalGrandTotal} to Meezan Bank (Acc: 33020112425464) and WhatsApp the proof to 03190609041 for confirmation.`;
             }
 
-            alert(successMsg);
-
-            clearCart(); // clear cart after order
+            AntdMess({ type: "success", messageText: successMsg });
+            clearCart();
         } catch (error) {
             console.error("Failed to place order:", error);
-            alert("Failed to place order. Try again.");
+            AntdMess({ type: "error", messageText: "Failed to place order. Try again." });
+        } finally {
+            setIsOrderPlaced(false);
         }
-        setIsOrderPlaced(false);
     };
 
 
@@ -103,6 +133,11 @@ const Cart = () => {
             </>
         );
     }
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
+        AntdMess({ type: "success", messageText: "Copied to clipboard!" });
+    };
 
     return (
         <>
@@ -191,12 +226,21 @@ const Cart = () => {
                         </button>
                     </div>
                     <div className="col-12 col-md-6 text-md-end">
+                        {onlinePaymentDiscount > 0 && (
+                            <p className="text-success fw-bold mb-1">
+                                <span role="img" aria-label="gift">🎁</span> Pay online now to get Rs {onlinePaymentDiscount} discount!
+                            </p>
+                        )}
                         <p className="mb-1">Subtotal: Rs {cartTotal}</p>
-                        <div className="mb-1"><p>
-                            Delivery Charge: Rs {fetchingDeliveryCharge ? "wait..." : deliveryCharge}
-                        </p>
+                        <div className="mb-1">
+                            <p>
+                                Delivery Charge: Rs {fetchingDeliveryCharge ? "wait..." : deliveryCharge}
+                            </p>
                         </div>
-                        <h4 className="fw-bold">Grand Total: Rs {fetchingDeliveryCharge ? "wait..." : grandTotal}</h4>
+                        {(paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash" || paymentMethod === "Bank Transfer") && (onlinePaymentDiscount > 0) && (
+                            <p className="mb-1 text-success fw-bold">Discount: - Rs {onlinePaymentDiscount}</p>
+                        )}
+                        <h4 className="fw-bold">Grand Total: Rs {fetchingDeliveryCharge ? "Calculating..." : (paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash" || paymentMethod === "Bank Transfer" ? grandTotal - onlinePaymentDiscount : grandTotal)}</h4>
                     </div>
                 </div>
 
@@ -207,78 +251,162 @@ const Cart = () => {
                         <div className="card shadow-sm p-4">
                             <h4 className="mb-4 text-center text-primary">Checkout</h4>
                             <form onSubmit={handlePlaceOrder}>
-                                <div className="mb-3">
+                                <div className="mb-3 input-group">
+                                    <span className="input-group-text">
+                                        <i className="fa-solid fa-user"></i>
+                                    </span>
                                     <input
+                                        required
                                         type="text"
                                         className="form-control"
                                         placeholder="Enter your name"
                                         name="name"
                                     />
                                 </div>
-                                <div className="mb-3">
+                                <div className="mb-3 input-group">
+                                    <span className="input-group-text">
+                                        <i className="fa-solid fa-phone"></i>
+                                    </span>
                                     <input
+                                        required
                                         type="text"
                                         className="form-control"
                                         placeholder="Enter your address"
                                         name="address"
                                     />
                                 </div>
-                                <div className="mb-3">
+                                <div className="mb-3 input-group">
+                                    <span className="input-group-text">
+                                        <i className="fa-solid fa-phone"></i>
+                                    </span>
                                     <input
+                                        required
                                         type="text"
                                         className="form-control"
-                                        placeholder="Enter your phone number"
+                                        placeholder={`Enter your phone number`}
                                         name="phone"
+
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="paymentMethod" className="form-label">
+                                    {/* <label htmlFor="paymentMethod" className="form-label">
                                         Select Payment Method
-                                    </label>
-                                    <select
-                                        className="form-control"
-                                        id="paymentMethod"
-                                        value={paymentMethod}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
-                                    >
-                                        <option value="Cash on Delivery">Cash on Delivery</option>
-                                        <option value="EasyPaisa">EasyPaisa</option>
-                                        <option value="JazzCash">JazzCash</option>
-                                        <option value="Bank Transfer">Bank Transfer</option>
-                                    </select>
+                                    </label> */}
+
+                                    <div className="input-group">
+                                        <span className="input-group-text">
+                                            <i className="fa-solid fa-money-bill"></i>
+                                        </span>
+
+                                        <select
+                                            className="form-select"
+                                            id="paymentMethod"
+                                            value={paymentMethod}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                        >
+                                            <option value="Cash on Delivery">Cash on Delivery</option>
+                                            <option value="EasyPaisa">EasyPaisa</option>
+                                            <option value="JazzCash">JazzCash</option>
+                                            <option value="Bank Transfer">Bank Transfer</option>
+                                        </select>
+
+                                    </div>
                                 </div>
+
 
                                 {/* Payment Instructions Alert */}
                                 {(paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash") && (
                                     <div className="alert alert-info">
                                         <h5>Payment Instructions</h5>
-                                        <p className="mb-1">Please send <strong>Rs {grandTotal}</strong> to the followig number:</p>
-                                        <p className="fs-5 fw-bold mb-2">03190609041</p>
-                                        <p className="mb-0">Once sent, please <strong>WhatsApp</strong> the screenshot/proof to the same number (03190609041) for order confirmation.</p>
+                                        <p className="mb-2 text-primary fw-bold">
+                                            <span role="img" aria-label="discount">🎉</span> You get Rs {onlinePaymentDiscount} discount for paying online!
+                                        </p>
+                                        <p className="mb-1">Please transfer <strong>Rs {grandTotal - onlinePaymentDiscount}</strong> to the following account:</p>
+                                        <div className="d-flex align-items-center gap-2 mb-2">
+                                            <span className="fs-5 fw-bold">03190609041</span>
+                                            <button type="button" className="btn btn-sm btn-outline-secondary py-0"
+                                                onClick={() => copyToClipboard("03190609041")}
+                                            >
+                                                <i className="fa-regular fa-copy"></i>
+                                            </button>
+                                        </div>
+
+                                        <p className="mb-0">
+                                            Once sent, please <strong>WhatsApp</strong> the screenshot/proof to
+                                            <span className="mx-1 fw-bold">03190609041</span>
+                                            <button type="button" className="btn btn-sm btn-outline-secondary py-0"
+                                                onClick={() => copyToClipboard("03190609041")}
+                                            >
+                                                <i className="fa-regular fa-copy"></i>
+                                            </button>
+                                        </p>
                                     </div>
                                 )}
+
 
                                 {paymentMethod === "Bank Transfer" && (
                                     <div className="alert alert-info">
                                         <h5>Bank Transfer Details (Meezan Bank)</h5>
-                                        <p className="mb-1">Please transfer <strong>Rs {grandTotal}</strong> to the following account:</p>
+                                        <p className="mb-1">Please transfer <strong>Rs {grandTotal - onlinePaymentDiscount}</strong> to the following account:</p>
+                                        <p className="mb-2 text-primary fw-bold">
+                                            <span role="img" aria-label="discount">🎉</span> You get Rs {onlinePaymentDiscount} discount for paying online!
+                                        </p>
                                         <ul className="list-unstyled">
-                                            <li><strong>Account No:</strong> 33020112425464</li>
-                                            <li><strong>IBAN:</strong> PK10MEZN0033020112425464</li>
+                                            <li className="mb-2 d-flex align-items-center gap-2">
+                                                <strong>Account No:</strong> 33020112425464
+                                                <button type="button" className="btn btn-sm btn-outline-secondary py-0" onClick={() => copyToClipboard("33020112425464")}><i className="fa-regular fa-copy"></i></button>
+                                            </li>
+                                            <li className="mb-2 d-flex align-items-center gap-2">
+                                                <strong>IBAN:</strong> PK10MEZN0033020112425464
+                                                <button type="button" className="btn btn-sm btn-outline-secondary py-0" onClick={() => copyToClipboard("PK10MEZN0033020112425464")}><i className="fa-regular fa-copy"></i></button>
+                                            </li>
                                         </ul>
-                                        <p className="mb-0">Once transferred, please <strong>WhatsApp</strong> the proof to 03190609041 for order confirmation.</p>
+                                        <p className="mb-0">
+                                            Once transferred, please <strong>WhatsApp</strong> the proof to
+                                            <span className="mx-1 fw-bold">03190609041</span>
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm p-0 mx-1 btn-outline-secondary"
+                                                onClick={() => copyToClipboard("03190609041")}
+                                            >
+                                                <i className="fa-regular fa-copy mx-2"></i>
+                                            </button>
+                                            for order confirmation.
+                                        </p>
                                     </div>
                                 )}
 
 
-                                <button className="btn btn-primary w-100 mt-3" type="submit" disabled={isOrderPlaced}>
-                                    {isOrderPlaced ? "Placing Order..." : "Place Order"}
+                                <button
+                                    className="btn btn-primary w-100 mt-3"
+                                    type="submit"
+                                    disabled={isOrderPlaced || fetchingDeliveryCharge}
+                                >
+                                    {isOrderPlaced ? "Placing Order..." :
+                                        fetchingDeliveryCharge ? "Calculating Charges..." : "Place Order"}
                                 </button>
                             </form>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <div className="col-12 my-5">
+                        <p className="mb-0">
+                            For product details, delivery, order cancellation, or return policy, contact us on{" "}
+                            <a
+                                href="https://wa.me/923190609041"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="fw-bold text-success text-decoration-none"
+                            >
+                                <i className="fa-brands fa-whatsapp me-1"></i>
+                                WhatsApp (0319-0609041)
+                            </a>
+                        </p>
+                    </div>
+
+
+
+                </div >
+            </div >
         </>
     );
 };
