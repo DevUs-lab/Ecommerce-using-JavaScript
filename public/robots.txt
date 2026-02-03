@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /adminlogin
 
-Sitemap: https://easybuy-ruby.vercel.app/sitemap.xml
+Sitemap: https://needbuy.vercel.app/sitemap.xml

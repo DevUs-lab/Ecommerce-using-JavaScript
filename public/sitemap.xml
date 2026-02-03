@@ -2,49 +2,49 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/</loc>
+    <loc>https://needbuy.vercel.app/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/products</loc>
+    <loc>https://needbuy.vercel.app/products</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/cart</loc>
+    <loc>https://needbuy.vercel.app/cart</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/about</loc>
+    <loc>https://needbuy.vercel.app/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/contact</loc>
+    <loc>https://needbuy.vercel.app/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/faq</loc>
+    <loc>https://needbuy.vercel.app/faq</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/privacy</loc>
+    <loc>https://needbuy.vercel.app/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://easybuy-ruby.vercel.app/terms</loc>
+    <loc>https://needbuy.vercel.app/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
