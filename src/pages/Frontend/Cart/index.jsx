@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp, doc, updateDoc, increment as firestoreIncrement, writeBatch } from "firebase/firestore";
+import { collection, serverTimestamp, doc, increment as firestoreIncrement, writeBatch } from "firebase/firestore";
 import { useEffect } from "react";
 import React, { useState } from "react";
 import { useCart } from "../../../Context/CartContext";
@@ -389,16 +389,16 @@ const Cart = () => {
                         </div>
                     </div>
                     <div className="col-12 my-5">
-                        <p className="mb-0">
-                            For product details, delivery, order cancellation, or return policy, contact us on{" "}
+                        <p className="mb-0 flex-nowrap">
+                            For product details, delivery, order cancellation, or return policy, contact us on{": "}
                             <a
                                 href="https://wa.me/923190609041"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="fw-bold text-success text-decoration-none"
+                                className="fw-bold text-success text-decoration-none text-nowrap"
                             >
-                                <i className="fa-brands fa-whatsapp me-1"></i>
-                                WhatsApp (0319-0609041)
+
+                                <i className="fa-brands fa-whatsapp me-1"></i> WhatsApp (0319-0609041)
                             </a>
                         </p>
                     </div>
