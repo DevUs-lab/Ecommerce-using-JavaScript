@@ -129,10 +129,31 @@ const Cart = () => {
         return (
             <>
                 <Header />
-                <h3 className="text-center mt-5">Your cart is empty 🛒</h3>
+
+                <div className="container my-5 text-center">
+                    <h3>Your cart is empty 🛒</h3>
+                </div>
+
+                {/* WhatsApp CTA */}
+                <div className="position-fixed bottom-0 start-0 w-100 bg-light border-top py-3">
+                    <p className="mb-0 text-center px-2">
+                        For product details, delivery, order cancellation, or return policy, contact us on{" "}
+                        <a
+                            href="https://wa.me/923190609041"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="fw-bold text-success text-decoration-none text-nowrap"
+                        >
+                            <i className="fa-brands fa-whatsapp me-1"></i>
+                            WhatsApp (0319-0609041)
+                        </a>
+                    </p>
+                </div>
             </>
         );
     }
+
+
 
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text);
@@ -281,7 +302,7 @@ const Cart = () => {
                                     </span>
                                     <input
                                         required
-                                        type="text"
+                                        type="tel"
                                         className="form-control"
                                         placeholder={`Enter your phone number`}
                                         name="phone"
@@ -388,19 +409,22 @@ const Cart = () => {
                             </form>
                         </div>
                     </div>
-                    <div className="col-12 my-5">
-                        <p className="mb-0 flex-nowrap">
-                            For product details, delivery, order cancellation, or return policy, contact us on{": "}
-                            <a
-                                href="https://wa.me/923190609041"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="fw-bold text-success text-decoration-none text-nowrap"
-                            >
+                    <div className="mt-5" style={{ marginBottom: "" }}>
 
-                                <i className="fa-brands fa-whatsapp me-1"></i> WhatsApp (0319-0609041)
-                            </a>
-                        </p>
+                        <div className="position-sticky sticky-bottom w-100 bg-light border-top pt-3">
+                            <p className="mb-0 text-center px-2">
+                                For product details, delivery, order cancellation, or return policy, contact us on{" "}
+                                <a
+                                    href="https://wa.me/923190609041?text=Hi%20I%20need%20help%20with%20my%20order"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="fw-bold text-success text-decoration-none text-nowrap  text-center"
+                                >
+                                    <i className="fa-brands fa-whatsapp me-1"></i>
+                                    WhatsApp (0319-0609041).
+                                </a>
+                            </p>
+                        </div>
                     </div>
 
 
