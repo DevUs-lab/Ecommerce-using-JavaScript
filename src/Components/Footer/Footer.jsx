@@ -32,16 +32,6 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Support */}
-                    {/* <div className="col-6 col-md-3 col-lg-2">
-                        <h6 className="mb-3">Support</h6>
-                        <ul className="list-unstyled footer-links">
-                            <li><Link to="/faq">FAQ</Link></li>
-                            <li><Link to="/privacy">Privacy Policy</Link></li>
-                            <li><Link to="/terms">Terms & Conditions</Link></li>
-                        </ul>
-                    </div> */}
-
                 </div>
             </div>
 

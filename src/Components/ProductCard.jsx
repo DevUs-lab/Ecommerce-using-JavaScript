@@ -9,10 +9,6 @@ const ProductCard = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
     const { addToCart } = useCart();
 
-    // console.log('product', product)
-
-
-
     const handleAddToCart = () => {
         if (product.stock <= 0) {
             AntdMess({ type: "error", messageText: "Out of stock" });

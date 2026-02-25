@@ -1,11 +1,7 @@
-/* @tailwind directives removed */
-@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "bootstrap/scss/bootstrap";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* @import "./toast.scss"; */
-/* Commenting out toast.scss for now as it might be missing, will verify later */
 
 .cartBtn:hover {
     background: black;
@@ -42,10 +38,6 @@
 main {
     .hero {
         position: relative;
-        /* background-image: linear-gradient(rgba(65, 175, 142, 0.5),
-                rgba(36, 59, 58, 0.)),
-            url("/public/1.png"); */
-        /* Adjusted path to root relative */
         background-image: linear-gradient(rgba(65, 175, 142, 0.5),
                 rgba(36, 59, 58, 0.5)),
             url("/hero.png");
@@ -102,7 +94,6 @@ main {
             .mt {
                 border-bottom: 1px solid rgb(192, 190, 190);
                 padding-bottom: 40px;
-                // border-radius: 20px;
                 margin: 2px 0px;
             }
         }
