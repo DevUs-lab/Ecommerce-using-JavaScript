@@ -46,6 +46,7 @@ const ProductCard = ({ product }) => {
                             src={product.imageUrl}
                             alt={product.productName}
                             className="img-fluid product-image rounded"
+                            loading="lazy"
                         />
                     </div>
 

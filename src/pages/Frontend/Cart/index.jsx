@@ -181,6 +181,7 @@ const Cart = () => {
                                     alt={item.productName}
                                     className="img-fluid rounded"
                                     style={{ maxWidth: "100px", objectFit: "cover" }}
+                                    loading="lazy"
                                 />
                                 <div>
                                     <h5 className="mb-1">{item.productName}</h5>

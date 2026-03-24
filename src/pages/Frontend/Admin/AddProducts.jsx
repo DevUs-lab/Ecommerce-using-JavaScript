@@ -384,7 +384,7 @@ const AddProducts = () => {
                     productsList.map((item) => (
                         <div className="col-md-4 py-3" key={item.id}>
                             <div className="card">
-                                <img src={item.imageUrl} className="card-img-top" />
+                                <img src={item.imageUrl} className="card-img-top" loading="lazy" />
                                 <div className='py-4'>
                                     <div className="card-body">
                                         <h5>{item.productName}</h5>
