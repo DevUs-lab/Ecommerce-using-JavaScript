@@ -32,7 +32,7 @@ const ProductCard = ({ product }) => {
 
 
     return (
-        <div className="mx-auto col-12 col-md-4 col-lg-3 mb-4">
+        <article className="mx-auto col-12 col-md-4 col-lg-3 mb-4">
             <div className="border shadow product-card">
 
                 <div className="row g-0 align-items-center">
@@ -93,8 +93,7 @@ const ProductCard = ({ product }) => {
 
                 </div>
             </div>
-        </div>
-
+        </article>
     );
 };
 

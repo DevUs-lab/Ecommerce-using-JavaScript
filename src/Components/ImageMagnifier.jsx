@@ -6,7 +6,8 @@ const ImageMagnifier = ({
     height = "auto",
     magnifierHeight = 150,
     magnifierWidth = 150,
-    zoomLevel = 2.5
+    zoomLevel = 2.5,
+    alt = "Product image"
 }) => {
     const [showMagnifier, setShowMagnifier] = useState(false);
     const [[x, y], setXY] = useState([0, 0]);
@@ -44,7 +45,7 @@ const ImageMagnifier = ({
                     // Close magnifier
                     setShowMagnifier(false);
                 }}
-                alt="Product"
+                alt={alt}
             />
 
             <div

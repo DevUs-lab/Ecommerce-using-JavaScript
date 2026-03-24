@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /adminlogin
+Disallow: /login
+Disallow: /register
 
 Sitemap: https://needbuy.vercel.app/sitemap.xml

@@ -100,7 +100,7 @@ const ProductDetail = () => {
                     <div className="col-md-6 mb-4">
                         <div className="border rounded shadow-sm mb-3 d-flex justify-content-center align-items-center bg-white" style={{ minHeight: '400px' }}>
                             {currentImage ? (
-                                <ImageMagnifier src={currentImage} />
+                                <ImageMagnifier src={currentImage} alt={product.productName} />
                             ) : (
                                 <p>No Image Available</p>
                             )}
@@ -119,7 +119,7 @@ const ProductDetail = () => {
                                         <img
                                             src={img}
                                             className="img-fluid w-100 h-100 object-fit-cover"
-                                            alt={`thumbnail-${index}`}
+                                            alt={`${product.productName} thumbnail ${index + 1}`}
                                         />
                                     </div>
                                 ))}
