@@ -25,18 +25,26 @@ const Contact = () => {
         e.preventDefault();
         setSending(true);
 
+        // Honeypot: bots fill this hidden field, humans don't.
+        if (e.target.website.value) {
+            AntdMess({ type: "success", messageText: "Message sent successfully!" });
+            setFormData({ name: '', email: '', message: '' });
+            setSending(false);
+            return;
+        }
+
         try {
             // 1️⃣ Send email using EmailJS
             await emailjs.send(
-                "Ecommerce",
-                "template_e0guznj",
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
                 {
                     name: formData.name,
                     email: formData.email,
                     message: formData.message,
                     title: "New Contact Message",
                 },
-                "dUe6ginQueaDP1o7m"
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             );
 
 
@@ -80,7 +88,12 @@ const Contact = () => {
                                     <label htmlFor="message" className="form-label">Message</label>
                                     <textarea className="form-control" id="message" name='message' value={formData.message} rows="5" onChange={handleChange} placeholder="Your Message"></textarea>
                                 </div>
-                                <button type="submit" className="btn btn-primary w-100">{sending ? "Sending..." : "Send Message"}</button>
+                                {/* Honeypot field — hidden from humans, catches spam bots */}
+                                <div style={{ position: 'absolute', left: '-9999px' }} aria-hidden="true">
+                                    <label htmlFor="website">Website</label>
+                                    <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off" />
+                                </div>
+                                <button type="submit" className="btn btn-primary w-100" disabled={sending}>{sending ? "Sending..." : "Send Message"}</button>
                             </form>
                         </div>
                     </div>

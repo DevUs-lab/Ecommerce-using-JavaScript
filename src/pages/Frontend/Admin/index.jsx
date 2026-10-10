@@ -7,16 +7,12 @@ import "./index.css"
 
 export default function AppRouter() {
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                setUser(currentUser);
-            } else {
-                setUser(null);
+            if (!currentUser) {
                 navigate("/adminlogin");
             }
             setLoading(false);

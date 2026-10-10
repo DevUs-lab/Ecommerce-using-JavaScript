@@ -70,7 +70,7 @@ const ProductDetail = () => {
 
     if (loading) {
         return (
-            <AntdSpin fullscreen messageText="Loading product details..." />
+            <AntdSpin tip="Loading product details..." />
         );
     }
 

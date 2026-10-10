@@ -15,10 +15,15 @@ const Products = () => {
     React.useEffect(() => {
         (async () => {
             setLoading(true);
-            const data = await getProducts();
-            const activeProducts = data.filter(product => product.stock > 0);
-            setProducts(activeProducts);
-            setLoading(false);
+            try {
+                const data = await getProducts();
+                const activeProducts = data.filter(product => product.stock > 0);
+                setProducts(activeProducts);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
         })();
     }, []);
 

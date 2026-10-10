@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useCart } from '../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { AntdMess } from './Antd';
@@ -6,7 +6,7 @@ import './productCard.css';
 
 const ProductCard = ({ product }) => {
     const navigate = useNavigate();
-    const [quantity, setQuantity] = useState(1);
+    const quantity = 1;
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {

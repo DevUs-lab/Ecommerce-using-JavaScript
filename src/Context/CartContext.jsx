@@ -6,8 +6,15 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState(() => {
-        const saved = localStorage.getItem("cart");
-        return saved ? JSON.parse(saved) : [];
+        try {
+            const saved = localStorage.getItem("cart");
+            if (!saved) return [];
+            const parsed = JSON.parse(saved);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            // Corrupted/invalid JSON in localStorage should not crash the app
+            return [];
+        }
     });
 
     const [deliveryCharge, setDeliveryCharge] = useState(null);
@@ -143,4 +150,5 @@ export const CartProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook + provider belong together
 export const useCart = () => useContext(CartContext);

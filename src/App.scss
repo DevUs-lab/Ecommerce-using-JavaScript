@@ -1,7 +1,9 @@
 @import "bootstrap/scss/bootstrap";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind v4 does not support @tailwind directives. Tailwind utilities are
+   currently NOT applied to this app. If you want Tailwind, replace the line
+   below with: @import "tailwindcss"; (note: its preflight reset may conflict
+   with Bootstrap). */
+/* @import "tailwindcss"; */
 
 .cartBtn:hover {
     background: black;

@@ -157,13 +157,16 @@ const AddProducts = () => {
             formData.append("upload_preset", "products_upload")
 
             const res = await fetch(
-                "https://api.cloudinary.com/v1_1/umairdevus/image/upload",
+                `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
                 {
                     method: "POST",
                     body: formData
                 }
             )
             const data = await res.json()
+            if (!res.ok || !data.secure_url) {
+                throw new Error(data?.error?.message || "Cloudinary upload failed")
+            }
             return {
                 url: data.secure_url, // Changed to lowercase 'url' to be consistent or match cloud response
                 publicId: data.public_id
@@ -384,7 +387,7 @@ const AddProducts = () => {
                     productsList.map((item) => (
                         <div className="col-md-4 py-3" key={item.id}>
                             <div className="card">
-                                <img src={item.imageUrl} className="card-img-top" loading="lazy" />
+                                <img src={item.imageUrl} className="card-img-top" loading="lazy" alt={item.productName} />
                                 <div className='py-4'>
                                     <div className="card-body">
                                         <h5>{item.productName}</h5>

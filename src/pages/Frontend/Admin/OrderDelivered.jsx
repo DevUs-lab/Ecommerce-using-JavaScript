@@ -8,10 +8,15 @@ const OrderDelivered = () => {
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         const fetchOrders = async () => {
-            const snapshot = await getDocs(collection(db, "orders"));
-            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setOrders(data);
-            setLoading(false);
+            try {
+                const snapshot = await getDocs(collection(db, "orders"));
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setOrders(data);
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchOrders();
     }, []);

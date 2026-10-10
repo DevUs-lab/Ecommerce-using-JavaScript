@@ -1,10 +1,21 @@
-import { collection, serverTimestamp, doc, increment as firestoreIncrement, writeBatch } from "firebase/firestore";
+import { collection, serverTimestamp, doc, increment as firestoreIncrement, runTransaction } from "firebase/firestore";
 import { useEffect } from "react";
 import React, { useState } from "react";
 import { useCart } from "../../../Context/CartContext";
 import Header from "../../../Components/Header";
 import { db } from "../../../firebase/config";
 import { AntdMess } from "../../../Components/Antd";
+
+// Thrown inside the checkout transaction when someone tries to buy more
+// than what is actually left in stock.
+class InsufficientStockError extends Error {
+    constructor(productName, available) {
+        super(`Not enough stock for ${productName}`);
+        this.name = "InsufficientStockError";
+        this.productName = productName;
+        this.available = available;
+    }
+}
 
 const Cart = () => {
     const {
@@ -79,35 +90,50 @@ const Cart = () => {
         const finalGrandTotal = grandTotal - discount;
 
         try {
-            const batch = writeBatch(db);
-            const orderRef = doc(collection(db, "orders"));
+            // A transaction re-reads stock inside Firestore, so two people
+            // buying the last unit at the same time can never oversell it.
+            const orderId = await runTransaction(db, async (transaction) => {
+                const productRefs = cartItems.map(item => doc(db, "products", item.id));
+                const productSnaps = await Promise.all(
+                    productRefs.map(ref => transaction.get(ref))
+                );
 
-            batch.set(orderRef, {
-                userId: "guest",
-                customerName: name,
-                address,
-                phone,
-                items: cartItems,
-                total: cartTotal,
-                deliveryCharge,
-                discount,
-                grandTotal: finalGrandTotal,
-                paymentMethod,
-                status: "pending",
-                createdAt: serverTimestamp(),
-            });
-
-            // Update stock in same batch
-            cartItems.forEach(item => {
-                const productRef = doc(db, "products", item.id);
-                batch.update(productRef, {
-                    stock: firestoreIncrement(-item.quantity)
+                cartItems.forEach((item, index) => {
+                    const snap = productSnaps[index];
+                    const available = snap.exists() ? (snap.data().stock ?? 0) : 0;
+                    if (!snap.exists() || item.quantity > available) {
+                        throw new InsufficientStockError(item.productName, available);
+                    }
                 });
+
+                const orderRef = doc(collection(db, "orders"));
+
+                transaction.set(orderRef, {
+                    userId: "guest",
+                    customerName: name,
+                    address,
+                    phone,
+                    items: cartItems,
+                    total: cartTotal,
+                    deliveryCharge,
+                    discount,
+                    grandTotal: finalGrandTotal,
+                    paymentMethod,
+                    status: "pending",
+                    createdAt: serverTimestamp(),
+                });
+
+                // Update stock in the same transaction
+                productRefs.forEach((productRef, index) => {
+                    transaction.update(productRef, {
+                        stock: firestoreIncrement(-cartItems[index].quantity)
+                    });
+                });
+
+                return orderRef.id;
             });
 
-            await batch.commit();
-
-            let successMsg = `Order placed successfully! Order ID: ${orderRef.id}`;
+            let successMsg = `Order placed successfully! Order ID: ${orderId}`;
             if (paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash") {
                 successMsg += `\n\nPlease send Rs ${finalGrandTotal} to 03190609041 and WhatsApp the proof for confirmation.`;
             } else if (paymentMethod === "Bank Transfer") {
@@ -117,8 +143,15 @@ const Cart = () => {
             AntdMess({ type: "success", messageText: successMsg });
             clearCart();
         } catch (error) {
-            console.error("Failed to place order:", error);
-            AntdMess({ type: "error", messageText: "Failed to place order. Try again." });
+            if (error instanceof InsufficientStockError) {
+                AntdMess({
+                    type: "info",
+                    messageText: `Not enough stock for ${error.productName}. Available: ${error.available}`
+                });
+            } else {
+                console.error("Failed to place order:", error);
+                AntdMess({ type: "error", messageText: "Failed to place order. Try again." });
+            }
         } finally {
             setIsOrderPlaced(false);
         }

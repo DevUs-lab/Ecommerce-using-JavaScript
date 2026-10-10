@@ -1,27 +1,31 @@
-// Import the functions you need from the SDKs you need
+// Firebase configuration
+// Values come from environment variables — see `.env.example`.
+// Copy `.env.example` to `.env` and fill in your real values.
+
 import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyBfiA-mCSnbxtKUcbSdLDMs3hxBkaGc3XY",
-    authDomain: "umair-303811.firebaseapp.com",
-    projectId: "umair-303811",
-    storageBucket: "umair-303811.firebasestorage.app",
-    messagingSenderId: "242121755427",
-    appId: "1:242121755427:web:57fd4ee6b3e208f8ec9a96",
-    measurementId: "G-RTQYNNXBVE"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
+
+// Fail loudly in development if the env file is missing
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    console.error(
+        "Firebase config is missing. Create a `.env` file (see `.env.example`) " +
+        "with your VITE_FIREBASE_* values and restart the dev server."
+    );
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 

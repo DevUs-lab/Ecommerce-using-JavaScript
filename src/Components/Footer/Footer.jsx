@@ -27,7 +27,7 @@ const Footer = () => {
                         <h6 className="mb-3">Quick Links</h6>
                         <ul className="list-unstyled footer-links">
                             <li><Link to="/products">Products</Link></li>
-                            <li><Link to="/categories">Categories</Link></li>
+                            <li><Link to="/products">Categories</Link></li>
                             <li><Link to="/contact">Contact Us</Link></li>
                         </ul>
                     </div>

@@ -1,0 +1,110 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------
+    // ADMIN CHECK
+    // A user is an admin if a document with their UID exists in the
+    // `admins` collection.
+    //
+    // BOOTSTRAP: after deploying these rules, create the first admin
+    // manually in the Firebase Console:
+    //   collection: admins  |  Document ID: <your admin user's UID>
+    //   field: { role: "owner" }
+    // ---------------------------------------------------------------
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // ---------------------------------------------------------------
+    // PRODUCTS
+    // Public catalog read. Only admins can create/delete/fully edit.
+    // Checkout may DECREASE stock (guests are not authenticated), but
+    // only the `stock` field, and never below zero.
+    // ---------------------------------------------------------------
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create, delete: if isAdmin();
+
+      allow update: if isAdmin()
+        || (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock'])
+          && request.resource.data.stock is int
+          && request.resource.data.stock >= 0
+          && request.resource.data.stock < resource.data.stock
+        );
+    }
+
+    // ---------------------------------------------------------------
+    // CATEGORIES
+    // ---------------------------------------------------------------
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // GLOBAL STORE SETTINGS (delivery charge / online discount)
+    // Public read so the cart can show charges; admin-only write.
+    // ---------------------------------------------------------------
+    match /globalSettings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // ORDERS
+    // Anyone may PLACE an order (guest checkout), but orders must start
+    // as "pending" and contain sane data. Only admins can read or change
+    // them afterwards — customer data stays private.
+    // ---------------------------------------------------------------
+    match /orders/{orderId} {
+      allow create: if request.resource.data.status == 'pending'
+        && request.resource.data.customerName is string
+        && request.resource.data.customerName.size() > 0
+        && request.resource.data.customerName.size() <= 120
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() > 0
+        && request.resource.data.phone.size() <= 20
+        && request.resource.data.address is string
+        && request.resource.data.address.size() > 0
+        && request.resource.data.address.size() <= 500
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 50
+        && request.resource.data.grandTotal is number
+        && request.resource.data.grandTotal >= 0
+        && request.resource.data.total is number
+        && request.resource.data.total >= 0;
+
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // CONTACT MESSAGES
+    // Anyone can submit; only admins can read them.
+    // ---------------------------------------------------------------
+    match /contacts/{contactId} {
+      allow create: if request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.email is string
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0;
+
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // ADMIN ALLOWLIST
+    // Only existing admins may add/remove admins. A user may also read
+    // their own document (used by isAdmin() checks in the client later).
+    // ---------------------------------------------------------------
+    match /admins/{uid} {
+      allow read: if isAdmin() || (request.auth != null && request.auth.uid == uid);
+      allow write: if isAdmin();
+    }
+  }
+}

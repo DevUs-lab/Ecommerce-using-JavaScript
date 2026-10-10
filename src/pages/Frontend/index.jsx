@@ -7,6 +7,7 @@ import Contact from './Contact'
 import Login from './Admin/AdminLogin'
 import Register from './Register'
 import Cart from './Cart'
+import NotFound from './NotFound'
 
 const Frontend = () => {
     return (
@@ -17,8 +18,8 @@ const Frontend = () => {
             <Route path="contact" element={<Contact />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
-            <Route path="*" element={<Home />} />
             <Route path="cart" element={<Cart />} />
+            <Route path="*" element={<NotFound />} />
 
         </Routes>
     )
