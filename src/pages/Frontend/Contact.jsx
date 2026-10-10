@@ -78,15 +78,15 @@ const Contact = () => {
                             <form onSubmit={handleSubmit} className="shadow p-4 rounded bg-white">
                                 <div className="mb-3">
                                     <label htmlFor="name" className="form-label">Name</label>
-                                    <input type="text" className="form-control" name='name' value={formData.name} onChange={handleChange} id="name" placeholder="Your Name" />
+                                    <input required type="text" className="form-control" name='name' value={formData.name} onChange={handleChange} id="name" placeholder="Your Name" />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email</label>
-                                    <input type="email" className="form-control" name='email' value={formData.email} onChange={handleChange} id="email" placeholder="Your Email" />
+                                    <input required type="email" className="form-control" name='email' value={formData.email} onChange={handleChange} id="email" placeholder="Your Email" />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="message" className="form-label">Message</label>
-                                    <textarea className="form-control" id="message" name='message' value={formData.message} rows="5" onChange={handleChange} placeholder="Your Message"></textarea>
+                                    <textarea required className="form-control" id="message" name='message' value={formData.message} rows="5" onChange={handleChange} placeholder="Your Message"></textarea>
                                 </div>
                                 {/* Honeypot field — hidden from humans, catches spam bots */}
                                 <div style={{ position: 'absolute', left: '-9999px' }} aria-hidden="true">

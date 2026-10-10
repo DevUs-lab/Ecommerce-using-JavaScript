@@ -26,14 +26,14 @@ const Home = () => {
             setLoading(true);
             try {
                 const data = await getProducts();
-                // console.log('data', data)
                 const activeProducts = data.filter(product => product.stock > 0);
                 setProducts(activeProducts);
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 AntdMess({ type: "error", messageText: "Failed to fetch products" });
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         fetchProducts();

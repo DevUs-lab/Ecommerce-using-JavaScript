@@ -41,14 +41,15 @@ const Cart = () => {
     // }, [deliveryCharge]);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setFetchingDeliveryCharge(false);
-        }, 5000); // Fallback after 5 seconds
-
         if (deliveryCharge !== null && deliveryCharge !== undefined) {
             setFetchingDeliveryCharge(false);
-            clearTimeout(timer);
+            return;
         }
+
+        // Fallback: stop showing "calculating" after 5 s even if Firestore is slow
+        const timer = setTimeout(() => {
+            setFetchingDeliveryCharge(false);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, [deliveryCharge]);
@@ -320,7 +321,7 @@ const Cart = () => {
                                 </div>
                                 <div className="mb-3 input-group">
                                     <span className="input-group-text">
-                                        <i className="fa-solid fa-phone"></i>
+                                        <i className="fa-solid fa-location-dot"></i>
                                     </span>
                                     <input
                                         required

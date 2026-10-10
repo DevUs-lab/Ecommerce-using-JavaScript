@@ -218,7 +218,8 @@ const AddProducts = () => {
                 prev.filter(p => p.id !== item.id)
             );
             AntdMess({ type: "success", messageText: "Product deleted" });
-        } catch {
+        } catch (error) {
+            console.error("Delete failed:", error);
             AntdMess({ type: "error", messageText: "Delete failed" });
         }
         setDeletingId(null);
@@ -326,14 +327,15 @@ const AddProducts = () => {
                     <form onSubmit={HandleSubmit}>
 
                         <div>
-                            {!editId && (
-                                <input
-                                    ref={fileRef}
-                                    type="file"
-                                    className="form-control"
-                                    multiple
-                                    onChange={(e) => setImages([...e.target.files])}
-                                />
+                            <input
+                                ref={fileRef}
+                                type="file"
+                                className="form-control"
+                                multiple
+                                onChange={(e) => setImages([...e.target.files])}
+                            />
+                            {editId && (
+                                <small className="text-muted">Leave empty to keep existing images.</small>
                             )}
                         </div>
 

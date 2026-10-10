@@ -115,10 +115,10 @@ export default function Dashboard() {
                                 </thead>
                                 <tbody>
                                     {outOfStockProducts.map((product, index) => (
-                                        <tr key={index}>
-                                            <td>{product.title || product.productName || "N/A"}</td>
+                                        <tr key={product.id || index}>
+                                            <td>{product.productName || "N/A"}</td>
                                             <td>{product.category}</td>
-                                            <td>Rs {product.price}</td>
+                                            <td>Rs {product.sellPrice}</td>
                                             <td><span className="badge bg-danger">Out of Stock</span></td>
                                         </tr>
                                     ))}
