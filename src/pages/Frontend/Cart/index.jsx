@@ -322,11 +322,12 @@ const Cart = () => {
 
                             <div className="col-2 col-md-1 mb-3 mb-md-0 text-end">
                                 <button
-                                    className="btn btn-transparent btn-sm rounded-circle p-2"
+                                    className="btn btn-outline-danger btn-sm"
                                     onClick={() => removeFromCart(item.id)}
-                                    title="Remove Item"
+                                    title="Remove item"
+                                    aria-label={`Remove ${item.productName} from cart`}
                                 >
-                                    ❌
+                                    <i className="fa-solid fa-trash-can" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
@@ -338,8 +339,11 @@ const Cart = () => {
                     <div className="col-12 col-md-6 mb-3 mb-md-0 d-flex justify-content-start">
                         <button
                             className="btn btn-outline-danger"
-                            onClick={clearCart}
+                            onClick={() => {
+                                if (window.confirm("Remove all items from your cart?")) clearCart();
+                            }}
                         >
+                            <i className="fa-solid fa-trash-can me-1" aria-hidden="true"></i>
                             Clear Cart
                         </button>
                     </div>

@@ -1,9 +1,41 @@
 
+/* Product card look & feel */
+.product-card {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.product-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 /* Image control */
 .product-image {
     width: 100%;
     height: auto;
     object-fit: cover;
+}
+
+.product-image-wrap {
+    background: #fff;
+}
+
+@media (min-width: 576px) {
+    .product-image {
+        height: 190px;
+        object-fit: contain;
+        padding: 8px;
+    }
 }
 
 /* Mobile specific */

@@ -11,8 +11,18 @@ const ProductCard = ({ product }) => {
     const quantity = 1;
     const { addToCart } = useCart();
 
+    const stock = Number(product.stock) || 0;
+    const inStock = stock > 0;
+
+    const sellPrice = Number(product.sellPrice) || 0;
+    const delPrice = Number(product.delPrice) || 0;
+    const discountPercent =
+        delPrice > sellPrice && sellPrice > 0
+            ? Math.round(((delPrice - sellPrice) / delPrice) * 100)
+            : 0;
+
     const handleAddToCart = () => {
-        if (Number(product.stock) <= 0) {
+        if (!inStock) {
             AntdMess({ type: "error", messageText: "Out of stock" });
             return;
         }
@@ -21,7 +31,7 @@ const ProductCard = ({ product }) => {
     };
 
     const handleShopNow = () => {
-        if (Number(product.stock) <= 0) {
+        if (!inStock) {
             AntdMess({ type: "error", messageText: "Out of stock" });
             return;
         }
@@ -33,14 +43,20 @@ const ProductCard = ({ product }) => {
     const goToProduct = () => navigate(`/product/${product.id}`);
 
     return (
-        <article className="mx-auto col-12 col-md-4 col-lg-3 mb-4">
-            <div className="border shadow product-card">
+        <article className="col-12 col-md-4 col-lg-3 mb-4 d-flex">
+            <div className="border shadow-sm product-card w-100 d-flex flex-column position-relative">
 
-                <div className="row g-0 align-items-center">
+                {discountPercent > 0 && inStock && (
+                    <span className="badge bg-danger position-absolute top-0 start-0 m-2 z-1">
+                        -{discountPercent}%
+                    </span>
+                )}
+
+                <div className="row g-0 align-items-center flex-grow-1">
 
                     {/* IMAGE */}
                     <div
-                        className="col-5 col-md-12"
+                        className="col-5 col-md-12 product-image-wrap"
                         onClick={goToProduct}
                         style={{ cursor: 'pointer' }}
                         role="button"
@@ -51,20 +67,21 @@ const ProductCard = ({ product }) => {
                         <img
                             src={optimizedImageUrl(product.imageUrl, 600)}
                             alt={product.productName}
-                            className="img-fluid product-image rounded"
+                            className="img-fluid product-image rounded-top"
                             loading="lazy"
                             decoding="async"
                         />
                     </div>
 
                     {/* DETAILS */}
-                    <div className="col-7 col-md-12">
-                        <div className="p-2 p-md-3">
+                    <div className="col-7 col-md-12 d-flex flex-column">
+                        <div className="p-2 p-md-3 d-flex flex-column h-100">
 
                             <h3
-                                className="h6 mb-1 fw-bold"
+                                className="h6 mb-1 fw-bold product-title"
                                 onClick={goToProduct}
                                 style={{ cursor: 'pointer' }}
+                                title={product.productName}
                             >
                                 {product.productName}
                             </h3>
@@ -78,23 +95,30 @@ const ProductCard = ({ product }) => {
                             </p>
 
                             <p
-                                className="fw-bold mb-2"
+                                className="fw-bold mb-2 mt-auto"
                                 onClick={goToProduct}
-                                style={{ color: "#0097a7", cursor: 'pointer' }}
+                                style={{ color: "var(--nb-accent)", cursor: 'pointer' }}
                             >
                                 {formatPrice(product.sellPrice)}
-                                {Number(product.delPrice) > 0 && (
-                                    <del className="ms-2 text-muted">
+                                {delPrice > 0 && delPrice > sellPrice && (
+                                    <del className="ms-2 text-muted fw-normal small">
                                         {formatPrice(product.delPrice)}
                                     </del>
                                 )}
                             </p>
 
+                            {inStock && stock <= 5 && (
+                                <p className="small text-danger fw-semibold mb-2 d-none d-md-block">
+                                    <i className="fa-solid fa-fire me-1" aria-hidden="true"></i>
+                                    Only {stock} left!
+                                </p>
+                            )}
+
                             <div className="d-flex gap-2">
                                 <button
                                     className="btn btn-primary btn-small w-50"
                                     onClick={handleAddToCart}
-                                    disabled={Number(product.stock) <= 0}
+                                    disabled={!inStock}
                                 >
                                     Add to Cart
                                 </button>
@@ -102,11 +126,10 @@ const ProductCard = ({ product }) => {
                                 <button
                                     className="btn btn-success btn-small w-50"
                                     onClick={handleShopNow}
-                                    disabled={Number(product.stock) <= 0}
+                                    disabled={!inStock}
                                 >
                                     Buy Now
                                 </button>
-
                             </div>
 
                         </div>

@@ -22,8 +22,11 @@ const NotFound = () => {
                 <p className="text-muted mb-4">
                     The page you are looking for doesn't exist or has been moved.
                 </p>
-                <Link to="/" className="btn btn-primary px-4">
+                <Link to="/" className="btn btn-primary px-4 me-2">
                     Go to Home
+                </Link>
+                <Link to="/products" className="btn btn-outline-primary px-4">
+                    Browse Products
                 </Link>
             </main>
             <Footer />

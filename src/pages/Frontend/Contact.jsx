@@ -7,6 +7,30 @@ import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import emailjs from "emailjs-com"
 
+const CONTACT_CARDS = [
+    {
+        icon: "fa-brands fa-whatsapp",
+        title: "WhatsApp",
+        text: "Fastest way to reach us",
+        href: "https://wa.me/923190609041",
+        linkText: "0319-0609041",
+    },
+    {
+        icon: "fa-solid fa-envelope",
+        title: "Email",
+        text: "We reply within a few hours",
+        href: "mailto:umairdevus@gmail.com",
+        linkText: "umairdevus@gmail.com",
+    },
+    {
+        icon: "fa-solid fa-truck-fast",
+        title: "Delivery",
+        text: "Nationwide, 2–5 working days",
+        href: null,
+        linkText: "Cash on Delivery available",
+    },
+];
+
 const Contact = () => {
 
     const [sending, setSending] = useState(false); // Simulate success or failure  
@@ -76,10 +100,40 @@ const Contact = () => {
             <Navbar />
             <main className="py-5">
                 <div className="container">
-                    <h1 className="text-center mb-5">Contact Us</h1>
+                    <h1 className="text-center mb-2">Contact Us</h1>
+                    <p className="text-center text-muted mb-5">
+                        Questions about an order, a product, delivery or returns? We're happy to help.
+                    </p>
+
+                    {/* Contact options */}
+                    <div className="row g-3 justify-content-center mb-5">
+                        {CONTACT_CARDS.map((card) => (
+                            <div className="col-md-4" key={card.title}>
+                                <div className="card h-100 border-0 shadow-sm text-center p-4">
+                                    <i className={`${card.icon} fa-2x mb-3 text-primary`} aria-hidden="true"></i>
+                                    <h2 className="h5 mb-1">{card.title}</h2>
+                                    <p className="text-muted small mb-2">{card.text}</p>
+                                    {card.href ? (
+                                        <a
+                                            href={card.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="fw-semibold text-decoration-none"
+                                        >
+                                            {card.linkText}
+                                        </a>
+                                    ) : (
+                                        <span className="fw-semibold text-muted">{card.linkText}</span>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
                     <div className="row justify-content-center">
                         <div className="col-md-8">
                             <form onSubmit={handleSubmit} className="shadow p-4 rounded bg-white">
+                                <h2 className="h5 mb-4 text-center">Send us a message</h2>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="form-label">Name</label>
                                     <input required type="text" className="form-control" name='name' value={formData.name} onChange={handleChange} id="name" placeholder="Your Name" />
