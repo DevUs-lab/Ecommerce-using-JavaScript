@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { useCart } from '../../Context/CartContext';
 import './Header.css';
+
 const Navbar = () => {
     const { cartCount } = useCart();
     const [isOpen, setIsOpen] = useState(false);
+    const closeMenu = () => setIsOpen(false);
 
     return (
         <header>
@@ -23,19 +25,27 @@ const Navbar = () => {
                     <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarSupportedContent">
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0" id="mainNav">
                             <li className="nav-item">
-                                <NavLink className="nav-link px-3" to="/">Home</NavLink>
+                                <NavLink className="nav-link px-3" to="/" onClick={closeMenu}>Home</NavLink>
                             </li>
 
                             <li className="nav-item">
-                                <NavLink className="nav-link px-3" to="/products">Products</NavLink>
+                                <NavLink className="nav-link px-3" to="/products" onClick={closeMenu}>Products</NavLink>
                             </li>
                             <li className="nav-item">
-                                <NavLink className="nav-link px-3" to="/contact">Contact</NavLink>
+                                <NavLink className="nav-link px-3" to="/about" onClick={closeMenu}>About</NavLink>
                             </li>
                             <li className="nav-item">
-                                <NavLink to="/cart" className="nav-link px-3 ">
+                                <NavLink className="nav-link px-3" to="/contact" onClick={closeMenu}>Contact</NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink
+                                    to="/cart"
+                                    className="nav-link px-3"
+                                    onClick={closeMenu}
+                                    aria-label={`Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`}
+                                >
                                     🛒
-                                    <sup className=" mb-4"> {cartCount}</sup>
+                                    <sup className="mb-4"> {cartCount}</sup>
                                 </NavLink>
                             </li>
                         </ul>

@@ -1,12 +1,18 @@
 import React from 'react';
 import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
+import Seo from '../../Components/Seo';
 
 const PrivacyPolicy = () => {
     return (
         <>
+            <Seo
+                title="Privacy Policy"
+                description="Read how Need Buy Store collects, uses and protects your personal information when you shop on our website."
+                path="/privacy"
+            />
             <Navbar />
-            <div className="container py-5 min-h-screen">
+            <div className="container py-5">
                 <div className="row justify-content-center">
                     <div className="col-lg-10">
                         <h1 className="text-center mb-5">Privacy Policy</h1>

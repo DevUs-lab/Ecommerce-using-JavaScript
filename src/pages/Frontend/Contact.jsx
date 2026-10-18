@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
+import Seo from '../../Components/Seo';
 import { AntdMess } from '../../Components/Antd';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import emailjs from "emailjs-com"
-// import CartModal from '../../Components/CartModal';
 
 const Contact = () => {
 
@@ -68,8 +68,12 @@ const Contact = () => {
 
     return (
         <>
+            <Seo
+                title="Contact Us"
+                description="Questions about an order, delivery, returns or a product? Contact Need Buy Store by email or WhatsApp — we reply quickly."
+                path="/contact"
+            />
             <Navbar />
-            {/* <CartModal /> */}
             <main className="py-5">
                 <div className="container">
                     <h1 className="text-center mb-5">Contact Us</h1>

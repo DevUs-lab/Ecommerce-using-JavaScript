@@ -3,6 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { Spin } from "antd";
 import { AntdMess } from "../../../Components/Antd";
+import { formatPrice } from "../../../utils/format";
 
 const OrderDelivered = () => {
     const [orders, setOrders] = useState([]);
@@ -42,20 +43,24 @@ const OrderDelivered = () => {
             {deliveredOrders.map(order => (
                 <div key={order.id} className="card mb-2 p-3">
                     <p><strong>Order ID:</strong> {order.id}</p>
-                    <p><strong>Name:</strong> {order.customerName}</p>
-                    <p><strong>Address:</strong> {order.address}</p>
-                    <p><strong>Phone:</strong> {order.phone}</p>
-                    <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
+                    <p><strong>Name:</strong> {order.customerName || "—"}</p>
+                    <p><strong>Address:</strong> {order.address || "—"}</p>
+                    <p><strong>Phone:</strong> {order.phone || "—"}</p>
+                    <p><strong>Payment Method:</strong> {order.paymentMethod || "—"}</p>
                     <p><strong>Items:</strong></p>
                     <ul>
-                        {order.items.map(item => (
-                            <li key={item.id}>{item.productName} x {item.quantity} = Rs {item.quantity * item.sellPrice}</li>
+                        {(order.items || []).map(item => (
+                            <li key={item.id}>
+                                {item.productName} x {item.quantity} = {formatPrice((Number(item.quantity) || 0) * (Number(item.sellPrice) || 0))}
+                            </li>
                         ))}
                     </ul>
-                    <p><strong>Total:</strong> Rs {order.total}</p>
-                    <p><strong>Delivery Charge:</strong> Rs {order.deliveryCharge}</p>
-                    {order.discount > 0 && <p><strong>Discount:</strong> - Rs {order.discount}</p>}
-                    <p><strong>Grand Total:</strong> Rs {order.grandTotal}</p>
+                    <p><strong>Total:</strong> {formatPrice(order.total)}</p>
+                    <p><strong>Delivery Charge:</strong> {formatPrice(order.deliveryCharge)}</p>
+                    {Number(order.discount) > 0 && (
+                        <p><strong>Discount:</strong> - {formatPrice(order.discount)}</p>
+                    )}
+                    <p><strong>Grand Total:</strong> {formatPrice(order.grandTotal)}</p>
                     <p><strong>Status:</strong> <span className="badge bg-success">Delivered</span></p>
                 </div>
             ))}

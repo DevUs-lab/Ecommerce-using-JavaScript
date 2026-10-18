@@ -1,13 +1,17 @@
 import React from 'react';
 import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
-// import CartModal from '../../Components/CartModal';
+import Seo from '../../Components/Seo';
 
 const About = () => {
     return (
         <>
+            <Seo
+                title="About Us"
+                description="Learn about Need Buy Store — Pakistan's trusted online shop for quality tech gadgets, genuine products, fair prices and fast nationwide delivery."
+                path="/about"
+            />
             <Navbar />
-            {/* <CartModal /> */}
             <main className="py-5">
                 <div className="container">
                     <h1 className="text-center mb-5">About Us</h1>

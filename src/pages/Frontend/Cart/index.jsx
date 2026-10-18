@@ -1,10 +1,13 @@
 import { collection, serverTimestamp, doc, increment as firestoreIncrement, runTransaction } from "firebase/firestore";
-import { useEffect } from "react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useCart } from "../../../Context/CartContext";
-import Header from "../../../Components/Header";
+import Navbar from "../../../Components/Header/Navbar";
+import Footer from "../../../Components/Footer/Footer";
+import Seo from "../../../Components/Seo";
 import { db } from "../../../firebase/config";
 import { AntdMess } from "../../../Components/Antd";
+import { formatPrice } from "../../../utils/format";
 
 // Thrown inside the checkout transaction when someone tries to buy more
 // than what is actually left in stock.
@@ -54,6 +57,16 @@ const Cart = () => {
         return () => clearTimeout(timer);
     }, [deliveryCharge]);
 
+    const isOnlinePayment =
+        paymentMethod === "EasyPaisa" ||
+        paymentMethod === "JazzCash" ||
+        paymentMethod === "Bank Transfer";
+    const safeDeliveryCharge = Number(deliveryCharge) || 0;
+    const discountAmount = isOnlinePayment
+        ? Math.min(Number(onlinePaymentDiscount) || 0, grandTotal)
+        : 0;
+    const finalGrandTotal = Math.max(0, grandTotal - discountAmount);
+
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
         setIsOrderPlaced(true);
@@ -87,8 +100,10 @@ const Cart = () => {
             }
         }
 
-        const discount = (paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash" || paymentMethod === "Bank Transfer") ? (onlinePaymentDiscount || 0) : 0;
-        const finalGrandTotal = grandTotal - discount;
+        const discount = isOnlinePayment
+            ? Math.min(Number(onlinePaymentDiscount) || 0, grandTotal)
+            : 0;
+        const orderGrandTotal = Math.max(0, grandTotal - discount);
 
         try {
             // A transaction re-reads stock inside Firestore, so two people
@@ -116,9 +131,9 @@ const Cart = () => {
                     phone,
                     items: cartItems,
                     total: cartTotal,
-                    deliveryCharge,
+                    deliveryCharge: safeDeliveryCharge,
                     discount,
-                    grandTotal: finalGrandTotal,
+                    grandTotal: orderGrandTotal,
                     paymentMethod,
                     status: "pending",
                     createdAt: serverTimestamp(),
@@ -134,11 +149,30 @@ const Cart = () => {
                 return orderRef.id;
             });
 
-            let successMsg = `Order placed successfully! Order ID: ${orderId}`;
+            let successMsg = (
+                <span>Order placed successfully! Order ID: {orderId}</span>
+            );
             if (paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash") {
-                successMsg += `\n\nPlease send Rs ${finalGrandTotal} to 03190609041 and WhatsApp the proof for confirmation.`;
+                successMsg = (
+                    <span>
+                        Order placed successfully! Order ID: {orderId}
+                        <br />
+                        <br />
+                        Please send {formatPrice(orderGrandTotal)} to 03190609041
+                        and WhatsApp the screenshot for confirmation.
+                    </span>
+                );
             } else if (paymentMethod === "Bank Transfer") {
-                successMsg += `\n\nPlease transfer Rs ${finalGrandTotal} to Meezan Bank (Acc: 33020112425464) and WhatsApp the proof to 03190609041 for confirmation.`;
+                successMsg = (
+                    <span>
+                        Order placed successfully! Order ID: {orderId}
+                        <br />
+                        <br />
+                        Please transfer {formatPrice(orderGrandTotal)} to Meezan
+                        Bank (Acc: 33020112425464) and WhatsApp the proof to
+                        03190609041 for confirmation.
+                    </span>
+                );
             }
 
             AntdMess({ type: "success", messageText: successMsg });
@@ -162,14 +196,24 @@ const Cart = () => {
     if (cartItems.length === 0) {
         return (
             <>
-                <Header />
+                <Seo title="Your Cart" path="/cart" robots="noindex, nofollow" />
+                <Navbar />
 
-                <div className="container my-5 text-center">
-                    <h3>Your cart is empty 🛒</h3>
+                <div className="container my-5 text-center py-5">
+                    <div style={{ fontSize: "3rem" }} aria-hidden="true">🛒</div>
+                    <h1 className="h4 mb-3">Your cart is empty</h1>
+                    <p className="text-muted mb-4">
+                        Looks like you haven't added anything yet.
+                    </p>
+                    <Link to="/products" className="btn btn-primary px-4">
+                        Start Shopping
+                    </Link>
                 </div>
 
+                <Footer />
+
                 {/* WhatsApp CTA */}
-                <div className="position-fixed bottom-0 start-0 w-100 bg-light border-top py-3">
+                <div className="bg-light border-top py-3">
                     <p className="mb-0 text-center px-2">
                         For product details, delivery, order cancellation, or return policy, contact us on{" "}
                         <a
@@ -189,17 +233,35 @@ const Cart = () => {
 
 
 
-    const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text);
-        AntdMess({ type: "success", messageText: "Copied to clipboard!" });
+    const copyToClipboard = async (text) => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                // Fallback for non-secure contexts / older browsers
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+            AntdMess({ type: "success", messageText: "Copied to clipboard!" });
+        } catch (error) {
+            console.error("Copy failed:", error);
+            AntdMess({ type: "error", messageText: "Could not copy. Please copy manually." });
+        }
     };
 
     return (
         <>
-            <Header />
+            <Seo title="Your Cart" path="/cart" robots="noindex, nofollow" />
+            <Navbar />
 
             <div className="container my-5">
-                <h2 className="mb-4 text-center text-primary">Your Cart</h2>
+                <h1 className="h2 mb-4 text-center text-primary">Your Cart</h1>
 
                 {/* Cart Items */}
                 {cartItems.map((item) => (
@@ -219,7 +281,7 @@ const Cart = () => {
                                 />
                                 <div>
                                     <h5 className="mb-1">{item.productName}</h5>
-                                    <p className="text-muted mb-0">Price: Rs {item.sellPrice}</p>
+                                    <p className="text-muted mb-0">Price: {formatPrice(item.sellPrice)}</p>
                                 </div>
                             </div>
 
@@ -255,7 +317,7 @@ const Cart = () => {
                             </div>
 
                             <div className="col-4 col-md-2 text-center fw-bold mb-3 mb-md-0">
-                                Rs {item.sellPrice * item.quantity}
+                                {formatPrice(item.sellPrice * item.quantity)}
                             </div>
 
                             <div className="col-2 col-md-1 mb-3 mb-md-0 text-end">
@@ -282,21 +344,27 @@ const Cart = () => {
                         </button>
                     </div>
                     <div className="col-12 col-md-6 text-md-end">
-                        {onlinePaymentDiscount > 0 && (
+                        {discountAmount > 0 && !isOnlinePayment && (
                             <p className="text-success fw-bold mb-1">
-                                <span role="img" aria-label="gift">🎁</span> Pay online now to get Rs {onlinePaymentDiscount} discount!
+                                <span role="img" aria-label="gift">🎁</span> Pay online now to get {formatPrice(onlinePaymentDiscount)} discount!
                             </p>
                         )}
-                        <p className="mb-1">Subtotal: Rs {cartTotal}</p>
+                        <p className="mb-1">Subtotal: {formatPrice(cartTotal)}</p>
                         <div className="mb-1">
                             <p>
-                                Delivery Charge: Rs {fetchingDeliveryCharge ? "wait..." : deliveryCharge}
+                                Delivery Charge:{" "}
+                                {fetchingDeliveryCharge ? "Calculating…" : formatPrice(safeDeliveryCharge)}
                             </p>
                         </div>
-                        {(paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash" || paymentMethod === "Bank Transfer") && (onlinePaymentDiscount > 0) && (
-                            <p className="mb-1 text-success fw-bold">Discount: - Rs {onlinePaymentDiscount}</p>
+                        {discountAmount > 0 && isOnlinePayment && (
+                            <p className="mb-1 text-success fw-bold">
+                                Discount: - {formatPrice(discountAmount)}
+                            </p>
                         )}
-                        <h4 className="fw-bold">Grand Total: Rs {fetchingDeliveryCharge ? "Calculating..." : (paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash" || paymentMethod === "Bank Transfer" ? grandTotal - onlinePaymentDiscount : grandTotal)}</h4>
+                        <h4 className="fw-bold">
+                            Grand Total:{" "}
+                            {fetchingDeliveryCharge ? "Calculating…" : formatPrice(finalGrandTotal)}
+                        </h4>
                     </div>
                 </div>
 
@@ -339,7 +407,7 @@ const Cart = () => {
                                         required
                                         type="tel"
                                         className="form-control"
-                                        placeholder={`Enter your phone number`}
+                                        placeholder="Enter your phone number"
                                         name="phone"
 
                                     />
@@ -374,10 +442,12 @@ const Cart = () => {
                                 {(paymentMethod === "EasyPaisa" || paymentMethod === "JazzCash") && (
                                     <div className="alert alert-info">
                                         <h5>Payment Instructions</h5>
-                                        <p className="mb-2 text-primary fw-bold">
-                                            <span role="img" aria-label="discount">🎉</span> You get Rs {onlinePaymentDiscount} discount for paying online!
-                                        </p>
-                                        <p className="mb-1">Please transfer <strong>Rs {grandTotal - onlinePaymentDiscount}</strong> to the following account:</p>
+                                        {discountAmount > 0 && (
+                                            <p className="mb-2 text-primary fw-bold">
+                                                <span role="img" aria-label="discount">🎉</span> You get {formatPrice(discountAmount)} discount for paying online!
+                                            </p>
+                                        )}
+                                        <p className="mb-1">Please transfer <strong>{formatPrice(finalGrandTotal)}</strong> to the following account:</p>
                                         <div className="d-flex align-items-center gap-2 mb-2">
                                             <span className="fs-5 fw-bold">03190609041</span>
                                             <button type="button" className="btn btn-sm btn-outline-secondary py-0"
@@ -403,10 +473,12 @@ const Cart = () => {
                                 {paymentMethod === "Bank Transfer" && (
                                     <div className="alert alert-info">
                                         <h5>Bank Transfer Details (Meezan Bank)</h5>
-                                        <p className="mb-1">Please transfer <strong>Rs {grandTotal - onlinePaymentDiscount}</strong> to the following account:</p>
-                                        <p className="mb-2 text-primary fw-bold">
-                                            <span role="img" aria-label="discount">🎉</span> You get Rs {onlinePaymentDiscount} discount for paying online!
-                                        </p>
+                                        <p className="mb-1">Please transfer <strong>{formatPrice(finalGrandTotal)}</strong> to the following account:</p>
+                                        {discountAmount > 0 && (
+                                            <p className="mb-2 text-primary fw-bold">
+                                                <span role="img" aria-label="discount">🎉</span> You get {formatPrice(discountAmount)} discount for paying online!
+                                            </p>
+                                        )}
                                         <ul className="list-unstyled">
                                             <li className="mb-2 d-flex align-items-center gap-2">
                                                 <strong>Account No:</strong> 33020112425464
@@ -444,8 +516,7 @@ const Cart = () => {
                             </form>
                         </div>
                     </div>
-                    <div className="mt-5" style={{ marginBottom: "" }}>
-
+                    <div className="mt-5">
                         <div className="position-sticky sticky-bottom w-100 bg-light border-top pt-3">
                             <p className="mb-0 text-center px-2">
                                 For product details, delivery, order cancellation, or return policy, contact us on{" "}
@@ -453,19 +524,18 @@ const Cart = () => {
                                     href="https://wa.me/923190609041?text=Hi%20I%20need%20help%20with%20my%20order"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="fw-bold text-success text-decoration-none text-nowrap  text-center"
+                                    className="fw-bold text-success text-decoration-none text-nowrap"
                                 >
                                     <i className="fa-brands fa-whatsapp me-1"></i>
-                                    WhatsApp (0319-0609041).
+                                    WhatsApp (0319-0609041)
                                 </a>
                             </p>
                         </div>
                     </div>
+                </div>
+            </div>
 
-
-
-                </div >
-            </div >
+            <Footer />
         </>
     );
 };

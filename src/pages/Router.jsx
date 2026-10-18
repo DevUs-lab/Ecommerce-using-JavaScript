@@ -12,7 +12,6 @@ import AdminLogin from "./Frontend/Admin/AdminLogin";
 // main bundle to keep the customer-facing download small.
 const Admin = lazy(() => import("./Frontend/Admin"));
 const Dashboard = lazy(() => import("./Frontend/Admin/Dashboard"));
-const Users = lazy(() => import("./Frontend/Admin/Users"));
 const AddProducts = lazy(() => import("./Frontend/Admin/AddProducts"));
 const Settings = lazy(() => import("./Frontend/Admin/Settings"));
 const OrderDelivered = lazy(() => import("./Frontend/Admin/OrderDelivered"));
@@ -43,7 +42,6 @@ const Index = () => {
                     <Route index element={<Dashboard />} />
                     <Route path="orders-pending" element={<OrdersPending />} />
                     <Route path="order-delivered" element={<OrderDelivered />} />
-                    <Route path="users" element={<Users />} />
                     <Route path="add-products" element={<AddProducts />} />
                     <Route path="settings" element={<Settings />} />
                 </Route>

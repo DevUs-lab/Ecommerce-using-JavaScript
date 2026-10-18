@@ -1,24 +1,57 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../../../firebase/config";
-import AntdSpin from "../../../Components/Antd";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../../../firebase/config";
+import AntdSpin, { AntdMess } from "../../../Components/Antd";
+import Seo from "../../../Components/Seo";
 import "./index.css"
 
 export default function AppRouter() {
     const [loading, setLoading] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        let active = true;
+
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            if (!active) return;
+
             if (!currentUser) {
-                navigate("/adminlogin");
+                setLoading(false);
+                navigate("/adminlogin", { replace: true });
+                return;
             }
-            setLoading(false);
+
+            try {
+                // Only accounts listed in the `admins` collection may use the panel.
+                const adminSnap = await getDoc(doc(db, "admins", currentUser.uid));
+                if (!active) return;
+
+                if (adminSnap.exists()) {
+                    setIsAdmin(true);
+                } else {
+                    AntdMess({
+                        type: "error",
+                        messageText: "This account does not have admin access.",
+                    });
+                    await signOut(auth);
+                    navigate("/adminlogin", { replace: true });
+                }
+            } catch (error) {
+                console.error("Admin check failed:", error);
+                if (active) navigate("/adminlogin", { replace: true });
+            } finally {
+                if (active) setLoading(false);
+            }
         });
 
-        return () => unsubscribe();
+        return () => {
+            active = false;
+            unsubscribe();
+        };
     }, [navigate]);
 
     const handleLogout = async () => {
@@ -28,12 +61,19 @@ export default function AppRouter() {
 
     if (loading) {
         return (
-            <AntdSpin fullscreen size="large"/>
+            <AntdSpin fullscreen size="large" />
         );
+    }
+
+    if (!isAdmin) {
+        // Redirecting to the login page.
+        return null;
     }
 
     return (
         <div className="d-flex min-vh-100">
+            <Seo title="Admin Panel" path="/admin/" robots="noindex, nofollow" />
+
             {/* Sidebar */}
             <aside
                 className={`bg-dark text-white p-4 sidebar ${sidebarOpen ? "open" : ""
@@ -44,6 +84,7 @@ export default function AppRouter() {
                     <button
                         className="btn btn-sm btn-light d-md-none"
                         onClick={() => setSidebarOpen(false)}
+                        aria-label="Close menu"
                     >
                         ✕
                     </button>
@@ -53,7 +94,6 @@ export default function AppRouter() {
                     <Link to="/admin" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Dashboard</Link>
                     <Link to="/admin/orders-pending" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Orders Pending</Link>
                     <Link to="/admin/order-delivered" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Orders Delivered</Link>
-                    <Link to="/admin/users" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Users</Link>
                     <Link to="/admin/add-products" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Add Products</Link>
                     <Link to="/admin/settings" onClick={() => setSidebarOpen(false)} className="text-white text-decoration-none">Settings</Link>
                 </nav>
@@ -78,6 +118,7 @@ export default function AppRouter() {
                     <button
                         className="btn btn-light"
                         onClick={() => setSidebarOpen(true)}
+                        aria-label="Open menu"
                     >
                         ☰
                     </button>

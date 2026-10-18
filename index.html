@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="google-site-verification" content="nnePIBp-VIvxRRvmdWInXPWfdqQIugu8LkOMWM7tIeQ" />
   <meta name="theme-color" content="#ffffff" />
 
@@ -13,23 +13,34 @@
   <meta name="title" content="Need Buy – Online Shopping Store in Pakistan" />
   <meta name="description"
     content="Need Buy is Pakistan's leading online shopping store offering quality products, affordable prices, and fast delivery nationwide. Shop now for the best deals!" />
+  <meta name="keywords"
+    content="online shopping Pakistan, buy gadgets online, smartwatches, headphones, earbuds, mobile accessories, Need Buy Store" />
+  <meta name="author" content="Need Buy Store" />
   <link rel="canonical" href="https://needbuy.vercel.app/" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Need Buy Store" />
+  <meta property="og:locale" content="en_PK" />
   <meta property="og:url" content="https://needbuy.vercel.app/" />
   <meta property="og:title" content="Need Buy – Online Shopping Store in Pakistan" />
   <meta property="og:description"
     content="Need Buy is Pakistan's leading online shopping store offering quality products, affordable prices, and fast delivery nationwide. Shop now for the best deals!" />
   <meta property="og:image" content="https://needbuy.vercel.app/hero.webp" />
 
+  <!-- Performance: connect early to the third-party origins we use -->
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+  <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://needbuy.vercel.app/" />
-  <meta property="twitter:title" content="Need Buy – Online Shopping Store in Pakistan" />
-  <meta property="twitter:description"
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://needbuy.vercel.app/" />
+  <meta name="twitter:title" content="Need Buy – Online Shopping Store in Pakistan" />
+  <meta name="twitter:description"
     content="Need Buy is Pakistan's leading online shopping store offering quality products, affordable prices, and fast delivery nationwide. Shop now for the best deals!" />
-  <meta property="twitter:image" content="https://needbuy.vercel.app/hero.webp" />
+  <meta name="twitter:image" content="https://needbuy.vercel.app/hero.webp" />
 
   <!-- Favicons & Icons -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.webp">
@@ -45,6 +56,12 @@
 
 <body>
   <div id="root"></div>
+  <noscript>
+    <p style="font-family: sans-serif; text-align: center; padding: 24px;">
+      Need Buy Store requires JavaScript to display products and handle orders.
+      Please enable JavaScript in your browser.
+    </p>
+  </noscript>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

@@ -4,10 +4,10 @@ import { db } from "../../../firebase/config";
 import { getProducts } from "../../../Context/getProducts";
 import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
+import { formatPrice, formatCategory } from "../../../utils/format";
 
 export default function Dashboard() {
     const [stats, setStats] = useState({
-        totalUsers: 0, // Placeholder as we don't have user fetching logic right now or ignoring for this task
         totalProducts: 0,
         totalOrders: 0,
         completedOrders: 0,
@@ -25,7 +25,7 @@ export default function Dashboard() {
                 // Fetch Products
                 const productsData = await getProducts();
                 const totalProducts = productsData.length;
-                const outOfStock = productsData.filter(p => p.stock <= 0);
+                const outOfStock = productsData.filter(p => Number(p.stock) <= 0);
 
                 // Fetch Orders
                 const ordersSnapshot = await getDocs(collection(db, "orders"));
@@ -42,7 +42,6 @@ export default function Dashboard() {
 
 
                 setStats({
-                    totalUsers: 120, // Keep hardcoded or implement user fetch if needed
                     totalProducts,
                     totalOrders,
                     completedOrders,
@@ -68,11 +67,11 @@ export default function Dashboard() {
 
     return (
         <>
-            <h2 className="mb-4">Dashboard Overview</h2>
+            <h1 className="h2 mb-4">Dashboard Overview</h1>
 
             <div className="row g-3">
                 {/* Orders Stats */}
-                <div className="col-md-4" onClick={() => navigate("/admin/orders-pending")}>
+                <div className="col-md-6" style={{ cursor: "pointer" }} onClick={() => navigate("/admin/orders-pending")}>
                     <div className="card p-3 shadow-sm border-0 bg-primary text-white">
                         <h5>Total Orders</h5>
                         <h2>{stats.totalOrders}</h2>
@@ -81,19 +80,11 @@ export default function Dashboard() {
                 </div>
 
                 {/* Products Stats */}
-                <div className="col-md-4">
+                <div className="col-md-6">
                     <div className="card p-3 shadow-sm border-0 bg-success text-white">
                         <h5>Total Products</h5>
                         <h2>{stats.totalProducts}</h2>
                         <small>{stats.outOfStockCount} Out of Stock</small>
-                    </div>
-                </div>
-
-                {/* Users Stats (Placeholder) */}
-                <div className="col-md-4">
-                    <div className="card p-3 shadow-sm border-0 bg-secondary text-white">
-                        <h5>Total Users</h5>
-                        <h2>{stats.totalUsers}</h2>
                     </div>
                 </div>
             </div>
@@ -117,8 +108,8 @@ export default function Dashboard() {
                                     {outOfStockProducts.map((product, index) => (
                                         <tr key={product.id || index}>
                                             <td>{product.productName || "N/A"}</td>
-                                            <td>{product.category}</td>
-                                            <td>Rs {product.sellPrice}</td>
+                                            <td>{formatCategory(product.category)}</td>
+                                            <td>{formatPrice(product.sellPrice)}</td>
                                             <td><span className="badge bg-danger">Out of Stock</span></td>
                                         </tr>
                                     ))}

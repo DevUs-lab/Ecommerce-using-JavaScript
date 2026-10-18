@@ -2,6 +2,8 @@ import React from 'react';
 import { useCart } from '../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { AntdMess } from './Antd';
+import { formatPrice } from '../utils/format';
+import { optimizedImageUrl } from '../utils/imageOptimization';
 import './productCard.css';
 
 const ProductCard = ({ product }) => {
@@ -10,7 +12,7 @@ const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {
-        if (product.stock <= 0) {
+        if (Number(product.stock) <= 0) {
             AntdMess({ type: "error", messageText: "Out of stock" });
             return;
         }
@@ -19,7 +21,7 @@ const ProductCard = ({ product }) => {
     };
 
     const handleShopNow = () => {
-        if (product.stock <= 0) {
+        if (Number(product.stock) <= 0) {
             AntdMess({ type: "error", messageText: "Out of stock" });
             return;
         }
@@ -47,10 +49,11 @@ const ProductCard = ({ product }) => {
                         aria-label={`View ${product.productName}`}
                     >
                         <img
-                            src={product.imageUrl}
+                            src={optimizedImageUrl(product.imageUrl, 600)}
                             alt={product.productName}
                             className="img-fluid product-image rounded"
                             loading="lazy"
+                            decoding="async"
                         />
                     </div>
 
@@ -58,13 +61,13 @@ const ProductCard = ({ product }) => {
                     <div className="col-7 col-md-12">
                         <div className="p-2 p-md-3">
 
-                            <h6
-                                className="mb-1 fw-bold"
+                            <h3
+                                className="h6 mb-1 fw-bold"
                                 onClick={goToProduct}
                                 style={{ cursor: 'pointer' }}
                             >
                                 {product.productName}
-                            </h6>
+                            </h3>
 
                             <p
                                 onClick={goToProduct}
@@ -79,10 +82,10 @@ const ProductCard = ({ product }) => {
                                 onClick={goToProduct}
                                 style={{ color: "#0097a7", cursor: 'pointer' }}
                             >
-                                Rs {product.sellPrice}
-                                {product.delPrice && (
+                                {formatPrice(product.sellPrice)}
+                                {Number(product.delPrice) > 0 && (
                                     <del className="ms-2 text-muted">
-                                        Rs {product.delPrice}
+                                        {formatPrice(product.delPrice)}
                                     </del>
                                 )}
                             </p>
@@ -91,7 +94,7 @@ const ProductCard = ({ product }) => {
                                 <button
                                     className="btn btn-primary btn-small w-50"
                                     onClick={handleAddToCart}
-                                    disabled={product.stock <= 0}
+                                    disabled={Number(product.stock) <= 0}
                                 >
                                     Add to Cart
                                 </button>
@@ -99,7 +102,7 @@ const ProductCard = ({ product }) => {
                                 <button
                                     className="btn btn-success btn-small w-50"
                                     onClick={handleShopNow}
-                                    disabled={product.stock <= 0}
+                                    disabled={Number(product.stock) <= 0}
                                 >
                                     Buy Now
                                 </button>

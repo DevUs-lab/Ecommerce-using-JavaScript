@@ -1,33 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from '../../../Components/Header/Navbar';
-import Footer from '../../../Components/Footer/Footer';
-import ProductCard from '../../../Components/ProductCard';
-// import CartModal from '../../../Components/CartModal';
-import { getProducts } from '../../../Context/getProducts';
-import { Spin } from 'antd';
-import { AntdMess } from '../../../Components/Antd';
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { Spin } from "antd";
+import Navbar from "../../../Components/Header/Navbar";
+import Footer from "../../../Components/Footer/Footer";
+import ProductCard from "../../../Components/ProductCard";
+import Seo, { SITE_URL } from "../../../Components/Seo";
+import { getProducts } from "../../../Context/getProducts";
+import { AntdMess } from "../../../Components/Antd";
+import { formatCategory } from "../../../utils/format";
+
+const STORE_DESCRIPTION =
+    "Need Buy is Pakistan's leading online shopping store offering quality tech gadgets, affordable prices, and fast delivery nationwide. Shop smartwatches, earbuds, headphones and accessories online.";
 
 const Home = () => {
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const groupedProducts = products.reduce((acc, product) => {
-        if (!acc[product.category]) {
-            acc[product.category] = [];
-        }
-        acc[product.category].push(product);
-        return acc;
-    }, {});
-
-
-    // ✅ fetch on page load
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
                 const data = await getProducts();
-                const activeProducts = data.filter(product => product.stock > 0);
-                setProducts(activeProducts);
+                setProducts(data.filter((product) => Number(product.stock) > 0));
             } catch (error) {
                 console.error(error);
                 AntdMess({ type: "error", messageText: "Failed to fetch products" });
@@ -39,19 +33,60 @@ const Home = () => {
         fetchProducts();
     }, []);
 
+    const groupedProducts = useMemo(
+        () =>
+            products.reduce((acc, product) => {
+                const category = product.category || "other";
+                if (!acc[category]) acc[category] = [];
+                acc[category].push(product);
+                return acc;
+            }, {}),
+        [products]
+    );
+
+    const storeJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "OnlineStore",
+        name: "Need Buy Store",
+        url: SITE_URL,
+        logo: `${SITE_URL}/apple-touch-icon.webp`,
+        image: `${SITE_URL}/hero.webp`,
+        description: STORE_DESCRIPTION,
+        email: "umairdevus@gmail.com",
+        telephone: "+923190609041",
+        currenciesAccepted: "PKR",
+        paymentAccepted: "Cash on Delivery, EasyPaisa, JazzCash, Bank Transfer",
+        priceRange: "Rs",
+        address: { "@type": "PostalAddress", addressCountry: "PK" },
+    };
 
     return (
         <>
+            <Seo
+                title="Need Buy – Online Shopping Store in Pakistan"
+                description={STORE_DESCRIPTION}
+                path="/"
+                jsonLd={storeJsonLd}
+            />
             <Navbar />
-            {/* <CartModal /> */}
-            <main className='min-h-screen'>
+            <main>
                 <section className="hero pb-2 pb-md-5">
                     <div className="container">
                         <div className="row align-items-center">
-                            <div className="col-lg-6 text-white">
-                                <h1 className="display-4 fw-bold">Welcome to Need Buy Store</h1>
-                                <p className="lead">Your one-stop shop for the best tech gadgets.</p>
-                                {/* <a href="#products" className="btn btn-light btn-lg rounded-0 text-dark fw-bold px-4">Shop Now</a> */}
+                            <div className="col-lg-7 text-white">
+                                <h1 className="display-4 fw-bold">
+                                    Welcome to Need Buy Store
+                                </h1>
+                                <p className="lead">
+                                    Your one-stop shop for the best tech gadgets at
+                                    the best prices, delivered anywhere in Pakistan.
+                                </p>
+                                <Link
+                                    to="/products"
+                                    className="btn btn-light btn-lg rounded-0 text-dark fw-bold px-4 mt-2"
+                                >
+                                    Shop Now
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -63,94 +98,42 @@ const Home = () => {
                     </div>
                 </section>
 
-                <section id="products" className="py-12 px-4 mx-auto max-w-7xl">
-                    <h2 className="mb-8 text-center text-3xl font-bold">
-                        Featured Products
-                    </h2>
+                <section id="products" className="py-5">
+                    <div className="container">
+                        <h2 className="text-center fw-bold mb-5">Featured Products</h2>
 
-                    {loading && (
-                        <div className="d-flex align-items-center justify-content-center py-5" style={{ minHeight: "50vh" }}>
-                            <Spin tip="Loading products..." />
-                        </div>
-                    )}
-
-                    {!loading && products.length > 0 && (
-                        <div className="container">
-
-                            <div className="row">
-                                {/* {products.map(product => (
-                                    <ProductCard key={product.id} product={product} />
-                                ))} */}
-
-                                {Object.entries(groupedProducts).map(([category, items]) => (
-                                    <div key={category} className="mb-5 border-bottom pb-4">
-
-                                        <h2 className="mb-4 text-capitalize text-center">
-                                            {category.replace("-", " ")}
-                                        </h2>
-
-                                        <div className="row g-2 g-md-4">
-                                            {items.map(product => (
-                                                <ProductCard key={product.id} product={product} />
-                                            ))}
-                                        </div>
-
-                                    </div>
-                                ))}
-
-
+                        {loading && (
+                            <div className="text-center py-5">
+                                <Spin size="large" />
+                                <p className="text-muted mt-3 mb-0">Loading products…</p>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {!loading && products.length === 0 && (
-                        <p className="text-center">No products found</p>
-                    )}
+                        {!loading && products.length === 0 && (
+                            <p className="text-center text-muted mb-0">
+                                No products available right now. Please check back soon.
+                            </p>
+                        )}
+
+                        {!loading &&
+                            Object.entries(groupedProducts).map(([category, items]) => (
+                                <section key={category} className="mb-5">
+                                    <h3 className="h4 text-center text-capitalize mb-4">
+                                        {formatCategory(category)}
+                                    </h3>
+                                    <div className="row g-3">
+                                        {items.map((product) => (
+                                            <ProductCard key={product.id} product={product} />
+                                        ))}
+                                    </div>
+                                </section>
+                            ))}
+                    </div>
                 </section>
-
-                {/* Cart preview (shows Firestore-backed cart items when signed in) */}
-                {/* <CartPreview /> */}
-
             </main>
             <Footer />
         </>
     );
 };
-
-// const CartPreview = () => {
-
-//     return (
-//         <section className="py-4 container">
-//             <h3 className="mb-3">Your Cart</h3>
-//             <div className="row">
-//                 <div className="col-12">
-//                     <div className="list-group">
-//                         {/* {cart.map(item => (
-//                             <div key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
-//                                 <div className="d-flex align-items-center">
-//                                     <img src={item.image} alt={item.title} style={{ width: 50, height: 50, objectFit: 'cover', marginRight: 12 }} />
-//                                     <div>
-//                                         <div className="fw-bold">{item.title}</div>
-//                                         <small className="text-muted">Rs {item.price} x {item.quantity}</small>
-//                                     </div>
-//                                 </div>
-//                                 <div>
-//                                     <span className="fw-bold">Rs {item.price * item.quantity}</span>
-//                                 </div>
-//                             </div>
-//                         ))} */}
-//                     </div>
-//                     <div className="mt-3 d-flex justify-content-between align-items-center">
-//                         {/* <strong>Total: Rs {cartTotal}</strong> */}
-//                         <div>
-//                             <button className="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#cartModal">View Cart</button>
-//                             <a className="btn btn-sm btn-primary" href="/checkout">Checkout</a>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </section>
-//     );
-// };
 
 export default Home;

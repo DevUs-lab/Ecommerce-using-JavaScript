@@ -1,12 +1,66 @@
 import React from 'react';
 import Navbar from '../../Components/Header/Navbar';
 import Footer from '../../Components/Footer/Footer';
+import Seo from '../../Components/Seo';
+
+const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+        {
+            "@type": "Question",
+            name: "What products do you sell?",
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: "At Need Buy Store, we specialize in the best tech gadgets, including smartphones, accessories, smartwatches, and audio devices. We ensure high quality and genuine products for all our customers.",
+            },
+        },
+        {
+            "@type": "Question",
+            name: "How can I track my order?",
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: "Once your order is shipped, we will send you a tracking number via email or SMS. You can use this number to track your package on our delivery partner's website.",
+            },
+        },
+        {
+            "@type": "Question",
+            name: "What is your return policy?",
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: "We offer a 7-day return policy for defective or damaged items. Please ensure the product is in its original packaging with all accessories included. Contact our support team to initiate a return.",
+            },
+        },
+        {
+            "@type": "Question",
+            name: "Do you offer cash on delivery (COD)?",
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes, we offer Cash on Delivery (COD) services for most locations. You can pay for your order when it arrives at your doorstep.",
+            },
+        },
+        {
+            "@type": "Question",
+            name: "How long does delivery take?",
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: "Standard delivery typically takes 3-5 business days depending on your location. We strive to process and ship orders as quickly as possible.",
+            },
+        },
+    ],
+};
 
 const FAQs = () => {
     return (
         <>
+            <Seo
+                title="FAQs"
+                description="Frequently asked questions about Need Buy Store: products, order tracking, return policy, cash on delivery and delivery times in Pakistan."
+                path="/faq"
+                jsonLd={faqJsonLd}
+            />
             <Navbar />
-            <div className="container py-5 min-h-screen">
+            <div className="container py-5">
                 <div className="row justify-content-center">
                     <div className="col-lg-8">
                         <h1 className="text-center mb-5">Frequently Asked Questions</h1>

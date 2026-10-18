@@ -1,8 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
+
+# Private / transactional pages
+Disallow: /admin
 Disallow: /adminlogin
-Disallow: /login
-Disallow: /register
+Disallow: /cart
 
 Sitemap: https://needbuy.vercel.app/sitemap.xml

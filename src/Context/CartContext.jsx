@@ -27,8 +27,8 @@ export const CartProvider = ({ children }) => {
                 const docRef = doc(db, "globalSettings", "storeInfo");
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    setDeliveryCharge(docSnap.data().deliveryCharge || 0);
-                    setOnlinePaymentDiscount(docSnap.data().onlinePaymentDiscount || 0);
+                    setDeliveryCharge(docSnap.data().deliveryCharge ?? 0);
+                    setOnlinePaymentDiscount(docSnap.data().onlinePaymentDiscount ?? 0);
                 }
             } catch (error) {
                 console.error("Failed to fetch delivery charge", error);
@@ -121,14 +121,14 @@ export const CartProvider = ({ children }) => {
 
     const clearCart = () => setCartItems([]);
 
-    const cartCount = cartItems.reduce((t, i) => t + i.quantity, 0);
+    const cartCount = cartItems.reduce((t, i) => t + (Number(i.quantity) || 0), 0);
 
     const cartTotal = cartItems.reduce(
-        (t, i) => t + i.quantity * i.sellPrice,
+        (t, i) => t + (Number(i.quantity) || 0) * (Number(i.sellPrice) || 0),
         0
     );
 
-    const grandTotal = cartTotal + (deliveryCharge || 0);
+    const grandTotal = cartTotal + (Number(deliveryCharge) || 0);
 
     return (
         <CartContext.Provider value={{

@@ -4,6 +4,8 @@ import { db } from '../../../firebase/config';
 import { getProducts } from '../../../Context/getProducts';
 import { Spin } from "antd";
 import { AntdMess } from "../../../Components/Antd";
+import { formatPrice } from "../../../utils/format";
+import { optimizeImage, optimizedImageUrl, getImageSavings, formatBytes } from "../../../utils/imageOptimization";
 
 const AddProducts = () => {
     const initialstate = {
@@ -30,7 +32,13 @@ const AddProducts = () => {
 
 
     const makeSlug = (text) =>
-        text.toLowerCase().replace(/\s+/g, "-");
+        String(text)
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, "")
+            .replace(/[\s_]+/g, "-")
+            .replace(/-{2,}/g, "-")
+            .replace(/^-+|-+$/g, "");
 
 
     const handleAddCategory = async (e) => {
@@ -45,9 +53,21 @@ const AddProducts = () => {
         }
 
         const slug = makeSlug(categoryName);
+        if (!slug) {
+            AntdMess({ type: "error", messageText: "Category name required" });
+            setCategoriesloading(false);
+            return;
+        }
+
+        if (categories.some((cat) => cat.slug === slug || cat.id === slug)) {
+            AntdMess({ type: "error", messageText: "This category already exists" });
+            setCategoriesloading(false);
+            return;
+        }
+
         try {
             await setDoc(doc(db, "categories", slug), {
-                name: categoryName,
+                name: categoryName.trim(),
                 slug,
                 createdAt: serverTimestamp()
             });
@@ -56,7 +76,7 @@ const AddProducts = () => {
             setCategoryName("");
             fetchProducts(); // IMPORTANT
         } catch (error) {
-            console.log("Failed to add category", error);
+            console.error("Failed to add category", error);
             AntdMess({ type: "error", messageText: "Failed to add category" });
         } finally {
             setCategoriesloading(false);
@@ -87,7 +107,7 @@ const AddProducts = () => {
                 }
 
 
-                const uploadedImages = await uploadImagesToCloudinary()
+                const { uploadedImages, savedBytes } = await uploadImagesToCloudinary()
 
                 const date = new Date().getTime()
                 const id = `prod_${date}`
@@ -106,16 +126,21 @@ const AddProducts = () => {
                 })
 
 
-                AntdMess({ type: "success", messageText: "Product added successfully" });
+                AntdMess({
+                    type: "success",
+                    messageText: savedBytes > 0
+                        ? `Product added successfully — images optimized (saved ${formatBytes(savedBytes)})`
+                        : "Product added successfully",
+                });
                 fetchProducts();
                 setProducts(initialstate)
                 setImages([])
-                fileRef.current.value = "";
+                if (fileRef.current) fileRef.current.value = "";
 
             } else {
 
-                // Logic for editing images could be complex (add/remove), 
-                // for now let's just update text fields or replace images if new ones selected
+                // Editing: text fields are updated; images are replaced only
+                // when new ones are selected.
                 let updatedData = {
                     productName: products.productName,
                     descriptions: products.descriptions,
@@ -126,15 +151,22 @@ const AddProducts = () => {
                     updatedAt: new Date()
                 };
 
+                let savedBytes = 0;
                 if (images.length > 0) {
-                    const uploadedImages = await uploadImagesToCloudinary()
-                    updatedData.itemImages = uploadedImages;
-                    updatedData.imageUrl = uploadedImages[0]?.url;
+                    const result = await uploadImagesToCloudinary()
+                    savedBytes = result.savedBytes;
+                    updatedData.itemImages = result.uploadedImages;
+                    updatedData.imageUrl = result.uploadedImages[0]?.url;
                 }
 
                 await updateDoc(doc(db, "products", editId), updatedData);
 
-                AntdMess({ type: "success", messageText: "Product updated" });
+                AntdMess({
+                    type: "success",
+                    messageText: savedBytes > 0
+                        ? `Product updated — images optimized (saved ${formatBytes(savedBytes)})`
+                        : "Product updated",
+                });
                 fetchProducts();
                 setEditId(null);
                 setProducts(initialstate);
@@ -142,7 +174,7 @@ const AddProducts = () => {
                 if (fileRef.current) fileRef.current.value = "";
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
             AntdMess({ type: "error", messageText: "Failed to add product" });
         }
         setLoading(false)
@@ -151,9 +183,16 @@ const AddProducts = () => {
 
 
     const uploadImagesToCloudinary = async () => {
+        let savedBytes = 0;
+
         const uploadPromises = images.map(async (image) => {
+            // Downscale + compress before upload so oversized photos never
+            // reach the CDN at full size.
+            const optimizedFile = await optimizeImage(image);
+            savedBytes += getImageSavings(image.size, optimizedFile.size);
+
             const formData = new FormData()
-            formData.append("file", image)
+            formData.append("file", optimizedFile, optimizedFile.name || "image.webp")
             formData.append("upload_preset", "products_upload")
 
             const res = await fetch(
@@ -173,7 +212,8 @@ const AddProducts = () => {
             }
         });
 
-        return Promise.all(uploadPromises);
+        const uploadedImages = await Promise.all(uploadPromises);
+        return { uploadedImages, savedBytes };
     }
 
 
@@ -389,13 +429,13 @@ const AddProducts = () => {
                     productsList.map((item) => (
                         <div className="col-md-4 py-3" key={item.id}>
                             <div className="card">
-                                <img src={item.imageUrl} className="card-img-top" loading="lazy" alt={item.productName} />
+                                <img src={optimizedImageUrl(item.imageUrl, 400)} className="card-img-top" loading="lazy" alt={item.productName} />
                                 <div className='py-4'>
                                     <div className="card-body">
                                         <h5>{item.productName}</h5>
                                         <p>{item.descriptions}</p>
-                                        <p>Price: {item.sellPrice} <span>del: <del>{item.delPrice}</del></span></p>
-                                        <p>Stock: {item.stock}</p>
+                                        <p>Sell: {formatPrice(item.sellPrice)} <span className="text-muted">Del: <del>{formatPrice(item.delPrice)}</del></span></p>
+                                        <p>Stock: {Number(item.stock) || 0}</p>
                                         <p className="text-muted">
                                             Added on:{" "}
                                             {item.createdAt

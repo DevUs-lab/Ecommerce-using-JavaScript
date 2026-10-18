@@ -1,12 +1,18 @@
 import React from 'react';
 import Footer from '../../Components/Footer/Footer';
 import Navbar from '../../Components/Header/Navbar';
+import Seo from '../../Components/Seo';
 
 const Terms = () => {
     return (
         <>
+            <Seo
+                title="Terms & Conditions"
+                description="The terms and conditions for using Need Buy Store: products and pricing, orders and payments, shipping, returns and refunds."
+                path="/terms"
+            />
             <Navbar />
-            <div className="container py-5 min-h-screen">
+            <div className="container py-5">
                 <div className="row justify-content-center">
                     <div className="col-lg-10">
                         <h1 className="text-center mb-5">Terms & Conditions</h1>
