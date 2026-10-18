@@ -4,7 +4,7 @@ import { db } from '../../../firebase/config';
 import { getProducts } from '../../../Context/getProducts';
 import { Spin } from "antd";
 import { AntdMess } from "../../../Components/Antd";
-import { formatPrice } from "../../../utils/format";
+import { formatPrice, formatDateTime, toDate } from "../../../utils/format";
 import { optimizeImage, optimizedImageUrl, getImageSavings, formatBytes } from "../../../utils/imageOptimization";
 
 const AddProducts = () => {
@@ -29,6 +29,8 @@ const AddProducts = () => {
     const [categoryName, setCategoryName] = useState("");
     const [categories, setCategories] = useState([]);
     const [categoriesFetching, setCategoriesFetching] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState("");
 
 
     const makeSlug = (text) =>
@@ -91,6 +93,7 @@ const AddProducts = () => {
     }
 
     const fileRef = useRef(null);
+    const formRef = useRef(null);
 
     const HandleSubmit = async (e) => {
         e.preventDefault()
@@ -251,6 +254,8 @@ const AddProducts = () => {
     }
 
     const handleDelete = async (item) => {
+        if (!window.confirm(`Delete "${item.productName}"? This cannot be undone.`)) return;
+
         setDeletingId(item.id);
         try {
             await deleteDoc(doc(db, "products", item.id));
@@ -278,6 +283,9 @@ const AddProducts = () => {
         });
 
         setEditId(item.id);
+
+        // Jump back up to the form so the admin sees what they are editing.
+        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
     useEffect(() => { fetchProducts() }, [])
@@ -304,6 +312,16 @@ const AddProducts = () => {
         }
         setDeletingCat(null);
     };
+
+    const filteredProducts = productsList
+        .filter((item) => (categoryFilter ? item.category === categoryFilter : true))
+        .filter((item) => {
+            const term = searchTerm.trim().toLowerCase();
+            if (!term) return true;
+            return String(item.productName || "").toLowerCase().includes(term)
+                || String(item.category || "").toLowerCase().includes(term);
+        })
+        .sort((a, b) => (toDate(b.createdAt)?.getTime() || 0) - (toDate(a.createdAt)?.getTime() || 0));
 
     return (
         <div className='container'>
@@ -364,7 +382,7 @@ const AddProducts = () => {
 
 
 
-                    <form onSubmit={HandleSubmit}>
+                    <form onSubmit={HandleSubmit} ref={formRef}>
 
                         <div>
                             <input
@@ -421,12 +439,49 @@ const AddProducts = () => {
             </div >
 
             <div className="row mt-5">
+                <div className="col-12">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                        <h4 className="mb-0">
+                            Products ({filteredProducts.length}
+                            {filteredProducts.length !== productsList.length && ` of ${productsList.length}`})
+                        </h4>
+                        <div className="d-flex flex-wrap gap-2">
+                            <input
+                                type="search"
+                                className="form-control"
+                                style={{ maxWidth: "260px" }}
+                                placeholder="Search by name or category..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <select
+                                className="form-select"
+                                style={{ maxWidth: "200px" }}
+                                value={categoryFilter}
+                                onChange={(e) => setCategoryFilter(e.target.value)}
+                            >
+                                <option value="">All categories</option>
+                                {categories.map((cat) => (
+                                    <option key={cat.slug || cat.id} value={cat.slug || cat.id}>
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 {fetching ? (
                     <div className="d-flex align-items-center justify-content-center py-5">
                         <Spin size="large" />
                     </div>
+                ) : filteredProducts.length === 0 ? (
+                    <div className="col-12 text-center text-muted py-5">
+                        {productsList.length === 0
+                            ? "No products yet. Add your first product above."
+                            : "No products match your search or filter."}
+                    </div>
                 ) : (
-                    productsList.map((item) => (
+                    filteredProducts.map((item) => (
                         <div className="col-md-4 py-3" key={item.id}>
                             <div className="card">
                                 <img src={optimizedImageUrl(item.imageUrl, 400)} className="card-img-top" loading="lazy" alt={item.productName} />
@@ -435,20 +490,16 @@ const AddProducts = () => {
                                         <h5>{item.productName}</h5>
                                         <p>{item.descriptions}</p>
                                         <p>Sell: {formatPrice(item.sellPrice)} <span className="text-muted">Del: <del>{formatPrice(item.delPrice)}</del></span></p>
-                                        <p>Stock: {Number(item.stock) || 0}</p>
+                                        <p>
+                                            Stock: {Number(item.stock) || 0}{" "}
+                                            {Number(item.stock) <= 0 ? (
+                                                <span className="badge bg-danger">Out of stock</span>
+                                            ) : Number(item.stock) <= 5 ? (
+                                                <span className="badge bg-warning text-dark">Low stock</span>
+                                            ) : null}
+                                        </p>
                                         <p className="text-muted">
-                                            Added on:{" "}
-                                            {item.createdAt
-                                                ? item.createdAt.toDate
-                                                    ? item.createdAt.toDate().toLocaleString("en-GB", {
-                                                        dateStyle: "medium",
-                                                        timeStyle: "short"
-                                                    })
-                                                    : new Date(item.createdAt).toLocaleString("en-GB", {
-                                                        dateStyle: "medium",
-                                                        timeStyle: "short"
-                                                    })
-                                                : "N/A"}
+                                            Added on: {formatDateTime(item.createdAt, "N/A")}
                                         </p>
 
                                     </div>

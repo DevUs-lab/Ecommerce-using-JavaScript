@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from '../../../firebase/config';
-import { AntdMess } from '../../../Components/Antd';
+import AntdSpin, { AntdMess } from '../../../Components/Antd';
 
 const Settings = () => {
     const [deliveryCharge, setDeliveryCharge] = useState(0);
     const [onlinePaymentDiscount, setOnlinePaymentDiscount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
+    const [saved, setSaved] = useState({ deliveryCharge: 0, onlinePaymentDiscount: 0 });
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -17,6 +18,10 @@ const Settings = () => {
                 if (docSnap.exists()) {
                     setDeliveryCharge(docSnap.data().deliveryCharge || 0);
                     setOnlinePaymentDiscount(docSnap.data().onlinePaymentDiscount || 0);
+                    setSaved({
+                        deliveryCharge: docSnap.data().deliveryCharge || 0,
+                        onlinePaymentDiscount: docSnap.data().onlinePaymentDiscount || 0
+                    });
                 }
             } catch (error) {
                 console.error("Error fetching settings:", error);
@@ -37,6 +42,10 @@ const Settings = () => {
                 deliveryCharge: Number(deliveryCharge),
                 onlinePaymentDiscount: Number(onlinePaymentDiscount)
             }, { merge: true });
+            setSaved({
+                deliveryCharge: Number(deliveryCharge),
+                onlinePaymentDiscount: Number(onlinePaymentDiscount)
+            });
             AntdMess({ type: "success", messageText: "Settings saved successfully" });
         } catch (error) {
             console.error("Error saving settings:", error);
@@ -46,7 +55,10 @@ const Settings = () => {
         }
     };
 
-    if (fetching) return <div className="text-center py-5">Loading settings...</div>;
+    if (fetching) return <AntdSpin fullscreen size="large" />;
+
+    const isDirty = Number(deliveryCharge) !== Number(saved.deliveryCharge)
+        || Number(onlinePaymentDiscount) !== Number(saved.onlinePaymentDiscount);
 
     return (
         <div className="container py-5">
@@ -80,8 +92,8 @@ const Settings = () => {
                                     />
                                     <div className="form-text">This discount will be applied for online payment methods like EasyPaisa, JazzCash, and Bank Transfer.</div>
                                 </div>
-                                <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                                    {loading ? "Saving..." : "Save Settings"}
+                                <button type="submit" className="btn btn-primary w-100" disabled={loading || !isDirty}>
+                                    {loading ? "Saving..." : isDirty ? "Save Settings" : "Saved"}
                                 </button>
                             </form>
                         </div>

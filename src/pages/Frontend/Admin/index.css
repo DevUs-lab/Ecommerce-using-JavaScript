@@ -26,3 +26,28 @@
     background: rgba(0, 0, 0, 0.5);
     z-index: 1040;
 }
+
+/* Push the logout / view-store block to the bottom of the sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-nav-link {
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+/* Dashboard stat cards look clickable */
+.stat-card {
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
