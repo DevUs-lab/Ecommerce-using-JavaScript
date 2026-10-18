@@ -3,7 +3,7 @@ Allow: /
 
 # Private / transactional pages
 Disallow: /admin
-Disallow: /adminlogin
+Disallow: /admin-login
 Disallow: /cart
 
 Sitemap: https://needbuy.vercel.app/sitemap.xml

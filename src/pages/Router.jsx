@@ -46,7 +46,7 @@ const Index = () => {
                     <Route path="settings" element={<Settings />} />
                 </Route>
 
-                <Route path="/adminlogin" element={<AdminLogin />} />
+                <Route path="/admin-login" element={<AdminLogin />} />
                 <Route path="/*" element={<Frontend />} />
             </Routes>
         </Suspense>

@@ -22,6 +22,10 @@ export const CartProvider = ({ children }) => {
 
     // 🔹 FETCH SETTINGS
     useEffect(() => {
+        // When Firebase env vars are missing the app shows a setup notice and
+        // `db` stays null — skip the fetch instead of throwing.
+        if (!db) return;
+
         const fetchSettings = async () => {
             try {
                 const docRef = doc(db, "globalSettings", "storeInfo");

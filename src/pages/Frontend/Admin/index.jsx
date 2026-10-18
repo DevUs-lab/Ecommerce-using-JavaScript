@@ -21,7 +21,7 @@ export default function AppRouter() {
 
             if (!currentUser) {
                 setLoading(false);
-                navigate("/adminlogin", { replace: true });
+                navigate("/admin-login", { replace: true });
                 return;
             }
 
@@ -38,11 +38,11 @@ export default function AppRouter() {
                         messageText: "This account does not have admin access.",
                     });
                     await signOut(auth);
-                    navigate("/adminlogin", { replace: true });
+                    navigate("/admin-login", { replace: true });
                 }
             } catch (error) {
                 console.error("Admin check failed:", error);
-                if (active) navigate("/adminlogin", { replace: true });
+                if (active) navigate("/admin-login", { replace: true });
             } finally {
                 if (active) setLoading(false);
             }
@@ -56,7 +56,7 @@ export default function AppRouter() {
 
     const handleLogout = async () => {
         await signOut(auth);
-        navigate("/adminlogin");
+        navigate("/admin-login");
     };
 
     if (loading) {
