@@ -63,23 +63,17 @@ const Products = () => {
         [categories, activeCategory]
     );
 
-    const matchesSearch = (product) => {
+    const visibleProducts = useMemo(() => {
         const term = searchTerm.trim().toLowerCase();
-        if (!term) return true;
-        return (
-            String(product.productName || "").toLowerCase().includes(term)
-            || String(product.descriptions || "").toLowerCase().includes(term)
-        );
-    };
+        const matchesSearch = (product) =>
+            !term
+            || String(product.productName || "").toLowerCase().includes(term)
+            || String(product.descriptions || "").toLowerCase().includes(term);
 
-    const visibleProducts = useMemo(
-        () =>
-            filteredByCategory
-                .map(([category, items]) => [category, items.filter(matchesSearch)])
-                .filter(([, items]) => items.length > 0),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [filteredByCategory, searchTerm]
-    );
+        return filteredByCategory
+            .map(([category, items]) => [category, items.filter(matchesSearch)])
+            .filter(([, items]) => items.length > 0);
+    }, [filteredByCategory, searchTerm]);
 
     const visibleCount = visibleProducts.reduce((acc, [, items]) => acc + items.length, 0);
 

@@ -38,7 +38,7 @@ export default function Dashboard() {
 
     const stats = useMemo(() => {
         const delivered = orders.filter((order) => order.status === "delivered");
-        const pending = orders.filter((order) => order.status !== "delivered");
+        const pending = orders.filter((order) => order.status === "pending");
         const sum = (list) => list.reduce((acc, order) => acc + (Number(order.grandTotal) || 0), 0);
 
         const outOfStock = products.filter((product) => Number(product.stock) <= 0);

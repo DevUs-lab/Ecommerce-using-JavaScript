@@ -8,6 +8,7 @@ import Seo from "../../../Components/Seo";
 import { db } from "../../../firebase/config";
 import { AntdMess } from "../../../Components/Antd";
 import { formatPrice } from "../../../utils/format";
+import { optimizedImageUrl } from "../../../utils/imageOptimization";
 
 // Thrown inside the checkout transaction when someone tries to buy more
 // than what is actually left in stock.
@@ -62,9 +63,9 @@ const Cart = () => {
         paymentMethod === "JazzCash" ||
         paymentMethod === "Bank Transfer";
     const safeDeliveryCharge = Number(deliveryCharge) || 0;
-    const discountAmount = isOnlinePayment
-        ? Math.min(Number(onlinePaymentDiscount) || 0, grandTotal)
-        : 0;
+    // Discount the store offers for paying online (capped at the cart total).
+    const onlineDiscountValue = Math.min(Number(onlinePaymentDiscount) || 0, grandTotal);
+    const discountAmount = isOnlinePayment ? onlineDiscountValue : 0;
     const finalGrandTotal = Math.max(0, grandTotal - discountAmount);
 
     const handlePlaceOrder = async (e) => {
@@ -90,10 +91,11 @@ const Cart = () => {
         }
 
         for (const item of cartItems) {
-            if (!item.stock || item.quantity > item.stock) {
+            const available = Number(item.stock) || 0;
+            if (available <= 0 || Number(item.quantity) > available) {
                 AntdMess({
                     type: "info",
-                    messageText: `Not enough stock for ${item.productName}. Available: ${item.stock || 0}`
+                    messageText: `Not enough stock for ${item.productName}. Available: ${available}`
                 });
                 setIsOrderPlaced(false);
                 return;
@@ -273,7 +275,7 @@ const Cart = () => {
                             {/* Image & Name */}
                             <div className="col-12 col-md-5 d-flex align-items-center gap-3 mb-3 mb-md-0">
                                 <img
-                                    src={item.imageUrl}
+                                    src={optimizedImageUrl(item.imageUrl, 200)}
                                     alt={item.productName}
                                     className="img-fluid rounded"
                                     style={{ maxWidth: "100px", objectFit: "cover" }}
@@ -348,9 +350,9 @@ const Cart = () => {
                         </button>
                     </div>
                     <div className="col-12 col-md-6 text-md-end">
-                        {discountAmount > 0 && !isOnlinePayment && (
+                        {onlineDiscountValue > 0 && !isOnlinePayment && (
                             <p className="text-success fw-bold mb-1">
-                                <span role="img" aria-label="gift">🎁</span> Pay online now to get {formatPrice(onlinePaymentDiscount)} discount!
+                                <span role="img" aria-label="gift">🎁</span> Pay online now to get {formatPrice(onlineDiscountValue)} discount!
                             </p>
                         )}
                         <p className="mb-1">Subtotal: {formatPrice(cartTotal)}</p>

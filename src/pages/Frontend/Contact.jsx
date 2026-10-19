@@ -57,34 +57,54 @@ const Contact = () => {
             return;
         }
 
+        // 1️⃣ Always save the message to Firestore first, so it is never lost
+        //    even when the email service has a problem.
+        let savedInDatabase = false;
         try {
-            // 1️⃣ Send email using EmailJS
-            await emailjs.send(
-                import.meta.env.VITE_EMAILJS_SERVICE_ID,
-                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-                {
-                    name: formData.name,
-                    email: formData.email,
-                    message: formData.message,
-                    title: "New Contact Message",
-                },
-                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-            );
-
-
-            // 2️⃣ Save message in Firebase
             await addDoc(collection(db, "contacts"), {
                 ...formData,
+                read: false,
                 createdAt: Timestamp.now()
             });
-
-            AntdMess({ type: "success", messageText: "Message sent successfully!" });
-            setFormData({ name: '', email: '', message: '' });
-
+            savedInDatabase = true;
         } catch (error) {
-            console.error("Error:", error);
-            AntdMess({ type: "error", messageText: "Failed to send message" });
+            console.error("Failed to save contact message:", error);
+        }
 
+        // 2️⃣ Then try to email it via EmailJS. A failure here is logged but
+        //    does not lose the message — it is already in the admin panel.
+        const emailReady = Boolean(
+            import.meta.env.VITE_EMAILJS_SERVICE_ID
+            && import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+            && import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        );
+        let emailed = false;
+        if (emailReady) {
+            try {
+                await emailjs.send(
+                    import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                    import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                    {
+                        name: formData.name,
+                        email: formData.email,
+                        message: formData.message,
+                        title: "New Contact Message",
+                    },
+                    import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+                );
+                emailed = true;
+            } catch (error) {
+                console.error("Failed to email contact message:", error);
+            }
+        } else {
+            console.warn("EmailJS environment variables are missing — message saved to Firestore only.");
+        }
+
+        if (savedInDatabase || emailed) {
+            AntdMess({ type: "success", messageText: "Message sent successfully! We'll get back to you soon." });
+            setFormData({ name: '', email: '', message: '' });
+        } else {
+            AntdMess({ type: "error", messageText: "Failed to send message. Please try again or contact us on WhatsApp." });
         }
 
         setSending(false);

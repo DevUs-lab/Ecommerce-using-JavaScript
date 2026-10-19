@@ -11,6 +11,7 @@ const NAV_ITEMS = [
     { to: "/admin", label: "Dashboard", icon: "fa-gauge-high", end: true },
     { to: "/admin/orders-pending", label: "Orders Pending", icon: "fa-clock" },
     { to: "/admin/order-delivered", label: "Orders Delivered", icon: "fa-circle-check" },
+    { to: "/admin/messages", label: "Messages", icon: "fa-envelope" },
     { to: "/admin/add-products", label: "Products", icon: "fa-box" },
     { to: "/admin/settings", label: "Settings", icon: "fa-gear" },
 ];

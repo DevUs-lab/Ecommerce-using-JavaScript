@@ -67,19 +67,15 @@ export const CartProvider = ({ children }) => {
     //     });
     // };
     const addToCart = (product, quantity) => {
+        const requested = Math.max(1, Number(quantity) || 1);
+        const stock = Number(product.stock) || 0;
+        if (stock <= 0) return; // never add an out-of-stock product
+
         setCartItems(prev => {
             const existing = prev.find(item => item.id === product.id);
 
             if (existing) {
-                const newQty = existing.quantity + quantity;
-
-                if (newQty > product.stock) {
-                    return prev.map(item =>
-                        item.id === product.id
-                            ? { ...item, quantity: product.stock }
-                            : item
-                    );
-                }
+                const newQty = Math.min((Number(existing.quantity) || 0) + requested, stock);
 
                 return prev.map(item =>
                     item.id === product.id
@@ -92,7 +88,7 @@ export const CartProvider = ({ children }) => {
                 ...prev,
                 {
                     ...product,
-                    quantity: quantity > product.stock ? product.stock : quantity
+                    quantity: Math.min(requested, stock)
                 }
             ];
         });
@@ -101,21 +97,24 @@ export const CartProvider = ({ children }) => {
 
     const increment = (id) => {
         setCartItems(prev =>
-            prev.map(item =>
-                item.id === id && item.quantity < item.stock
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            )
+            prev.map(item => {
+                if (item.id !== id) return item;
+                const stock = Number(item.stock) || 0;
+                const qty = Number(item.quantity) || 0;
+                if (qty >= stock) return item;
+                return { ...item, quantity: qty + 1 };
+            })
         );
     };
 
     const decrement = (id) => {
         setCartItems(prev =>
-            prev.map(item =>
-                item.id === id && item.quantity > 1
-                    ? { ...item, quantity: item.quantity - 1 }
-                    : item
-            )
+            prev.map(item => {
+                if (item.id !== id) return item;
+                const qty = Number(item.quantity) || 0;
+                if (qty <= 1) return item;
+                return { ...item, quantity: qty - 1 };
+            })
         );
     };
 

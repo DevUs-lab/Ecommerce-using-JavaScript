@@ -44,7 +44,7 @@ const faqJsonLd = {
             name: "How long does delivery take?",
             acceptedAnswer: {
                 "@type": "Answer",
-                text: "Standard delivery typically takes 3-5 business days depending on your location. We strive to process and ship orders as quickly as possible.",
+                text: "Standard delivery typically takes 2-5 working days depending on your location. We strive to process and ship orders as quickly as possible.",
             },
         },
     ],
@@ -132,7 +132,7 @@ const FAQs = () => {
                                 </h2>
                                 <div id="collapseFive" className="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
                                     <div className="accordion-body">
-                                        Standard delivery typically takes 3-5 business days depending on your location. We strive to process and ship orders as quickly as possible.
+                                        Standard delivery typically takes 2-5 working days depending on your location. We strive to process and ship orders as quickly as possible.
                                     </div>
                                 </div>
                             </div>

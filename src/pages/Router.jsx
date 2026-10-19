@@ -16,6 +16,7 @@ const AddProducts = lazy(() => import("./Frontend/Admin/AddProducts"));
 const Settings = lazy(() => import("./Frontend/Admin/Settings"));
 const OrderDelivered = lazy(() => import("./Frontend/Admin/OrderDelivered"));
 const OrdersPending = lazy(() => import("./Frontend/Admin/OrdersPeding"));
+const Messages = lazy(() => import("./Frontend/Admin/Messages"));
 
 const PageLoader = () => (
     <div
@@ -42,6 +43,7 @@ const Index = () => {
                     <Route index element={<Dashboard />} />
                     <Route path="orders-pending" element={<OrdersPending />} />
                     <Route path="order-delivered" element={<OrderDelivered />} />
+                    <Route path="messages" element={<Messages />} />
                     <Route path="add-products" element={<AddProducts />} />
                     <Route path="settings" element={<Settings />} />
                 </Route>

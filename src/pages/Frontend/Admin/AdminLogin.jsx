@@ -37,7 +37,7 @@ const AdminLogin = () => {
 
     return (
         <>
-            <Seo title="Admin Login" path="/adminlogin" robots="noindex, nofollow" />
+            <Seo title="Admin Login" path="/admin-login" robots="noindex, nofollow" />
             <Navbar />
             <main className="d-flex align-items-center justify-content-center" style={{ minHeight: "80vh" }}>
                 <div className="card shadow p-4" style={{ maxWidth: "400px", width: "100%" }}>
