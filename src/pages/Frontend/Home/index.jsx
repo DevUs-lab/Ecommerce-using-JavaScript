@@ -96,7 +96,7 @@ const Home = () => {
                 <section className="hero pb-2 pb-md-5">
                     <div className="container">
                         <div className="row align-items-center">
-                            <div className="col-lg-8 text-white">
+                            <div className="col-lg-8 text-white text-center text-md-start">
                                 <h1 className="display-4 fw-bold">
                                     Welcome to Need Buy Store
                                 </h1>
@@ -104,7 +104,7 @@ const Home = () => {
                                     Your one-stop shop for the best tech gadgets at
                                     the best prices, delivered anywhere in Pakistan.
                                 </p>
-                                <div className="d-flex flex-wrap gap-3 mt-2">
+                                <div className="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 mt-2">
                                     <Link
                                         to="/products"
                                         className="btn btn-light btn-lg rounded-0 text-dark fw-bold px-4"
@@ -122,7 +122,7 @@ const Home = () => {
                                         Order on WhatsApp
                                     </a>
                                 </div>
-                                <div className="d-flex flex-wrap gap-3 mt-4 text-white-50 small">
+                                <div className="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 mt-4 text-white-50 small">
                                     <span><i className="fa-solid fa-money-bill-wave me-1" aria-hidden="true"></i>Cash on Delivery</span>
                                     <span><i className="fa-solid fa-truck-fast me-1" aria-hidden="true"></i>Fast Nationwide Delivery</span>
                                     <span><i className="fa-solid fa-tags me-1" aria-hidden="true"></i>Best Prices</span>
@@ -173,7 +173,7 @@ const Home = () => {
                         )}
 
                         {!loading && products.length > 0 && (
-                            <div className="d-flex flex-wrap justify-content-center gap-2 mb-5">
+                            <div className="chips-row d-flex flex-wrap justify-content-center gap-2 mb-5">
                                 {Object.entries(groupedProducts).map(([category, items]) => (
                                     <Link
                                         key={category}

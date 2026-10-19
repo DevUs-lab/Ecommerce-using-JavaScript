@@ -152,3 +152,97 @@ main {
 .zoom-box img:hover {
     transform: scale(1.6);
 }
+
+/* --------------------------------------------------------------
+   Mobile refinements
+   These rules only apply on small screens — the desktop layout
+   stays exactly the same.
+   -------------------------------------------------------------- */
+
+/* Horizontally scrollable chip rows (category filters) on mobile */
+.chips-row {
+    @media (max-width: 767.98px) {
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: .5rem;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        >* {
+            flex-shrink: 0;
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    /* Hero: tighter, centered, full-width buttons */
+    main .hero {
+        min-height: auto;
+        padding-top: 2rem;
+
+        .row {
+            padding-bottom: 90px;
+        }
+
+        h1 {
+            font-size: 1.85rem;
+        }
+
+        .lead {
+            font-size: 1rem;
+        }
+
+        .btn-lg {
+            width: 100%;
+        }
+    }
+
+    /* Top strip: smaller text */
+    .top-strip {
+        font-size: .75rem;
+        padding-top: .3rem;
+        padding-bottom: .3rem;
+    }
+
+    /* Feature icons: slightly smaller */
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.15rem;
+    }
+
+    /* Cart items: comfortable tap targets */
+    .cart-item {
+        padding: .9rem !important;
+    }
+
+    .cart-item .btn-group .btn {
+        min-width: 42px;
+        min-height: 42px;
+    }
+}
+
+/* Navbar menu: bigger tap targets with separators on mobile/tablet */
+@media (max-width: 991.98px) {
+    .navbar {
+        .navbar-nav {
+            padding-top: .5rem;
+
+            .nav-link {
+                padding-top: .8rem;
+                padding-bottom: .8rem;
+                border-bottom: 1px solid #f1f3f5;
+            }
+        }
+
+        .nav-item:last-child .nav-link {
+            border-bottom: 0;
+        }
+    }
+}

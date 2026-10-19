@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCart } from '../Context/CartContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AntdMess } from './Antd';
 import { formatPrice } from '../utils/format';
 import { optimizedImageUrl } from '../utils/imageOptimization';
@@ -40,7 +40,7 @@ const ProductCard = ({ product }) => {
         navigate('/cart');
     };
 
-    const goToProduct = () => navigate(`/product/${product.id}`);
+    const productUrl = `/product/${product.id}`;
 
     return (
         <article className="col-12 col-md-4 col-lg-3 mb-4 d-flex">
@@ -55,13 +55,9 @@ const ProductCard = ({ product }) => {
                 <div className="row g-0 align-items-center flex-grow-1">
 
                     {/* IMAGE */}
-                    <div
-                        className="col-5 col-md-12 product-image-wrap"
-                        onClick={goToProduct}
-                        style={{ cursor: 'pointer' }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => e.key === 'Enter' && goToProduct()}
+                    <Link
+                        to={productUrl}
+                        className="col-4 col-md-12 product-image-wrap d-block text-reset text-decoration-none"
                         aria-label={`View ${product.productName}`}
                     >
                         <img
@@ -71,44 +67,44 @@ const ProductCard = ({ product }) => {
                             loading="lazy"
                             decoding="async"
                         />
-                    </div>
+                    </Link>
 
                     {/* DETAILS */}
-                    <div className="col-7 col-md-12 d-flex flex-column">
+                    <div className="col-8 col-md-12 d-flex flex-column">
                         <div className="p-2 p-md-3 d-flex flex-column h-100">
 
-                            <h3
-                                className="h6 mb-1 fw-bold product-title"
-                                onClick={goToProduct}
-                                style={{ cursor: 'pointer' }}
-                                title={product.productName}
-                            >
-                                {product.productName}
+                            <h3 className="h6 mb-1 fw-bold product-title">
+                                <Link
+                                    to={productUrl}
+                                    className="text-reset text-decoration-none"
+                                    title={product.productName}
+                                >
+                                    {product.productName}
+                                </Link>
                             </h3>
 
                             <p
-                                onClick={goToProduct}
                                 className="text-muted mb-1 d-none d-md-block product-description text-truncate"
-                                style={{ maxWidth: "100%", cursor: 'pointer' }}
+                                style={{ maxWidth: "100%" }}
                             >
-                                {product.descriptions}
+                                <Link to={productUrl} className="text-reset text-decoration-none">
+                                    {product.descriptions}
+                                </Link>
                             </p>
 
-                            <p
-                                className="fw-bold mb-2 mt-auto"
-                                onClick={goToProduct}
-                                style={{ color: "var(--nb-accent)", cursor: 'pointer' }}
-                            >
-                                {formatPrice(product.sellPrice)}
-                                {delPrice > 0 && delPrice > sellPrice && (
-                                    <del className="ms-2 text-muted fw-normal small">
-                                        {formatPrice(product.delPrice)}
-                                    </del>
-                                )}
+                            <p className="fw-bold mb-2 mt-auto" style={{ color: "var(--nb-accent)" }}>
+                                <Link to={productUrl} className="text-reset text-decoration-none">
+                                    {formatPrice(product.sellPrice)}
+                                    {delPrice > 0 && delPrice > sellPrice && (
+                                        <del className="ms-2 text-muted fw-normal small">
+                                            {formatPrice(product.delPrice)}
+                                        </del>
+                                    )}
+                                </Link>
                             </p>
 
                             {inStock && stock <= 5 && (
-                                <p className="small text-danger fw-semibold mb-2 d-none d-md-block">
+                                <p className="small text-danger fw-semibold mb-2">
                                     <i className="fa-solid fa-fire me-1" aria-hidden="true"></i>
                                     Only {stock} left!
                                 </p>
@@ -116,7 +112,7 @@ const ProductCard = ({ product }) => {
 
                             <div className="d-flex gap-2">
                                 <button
-                                    className="btn btn-primary btn-small w-50"
+                                    className="btn btn-primary btn-small w-50 text-nowrap"
                                     onClick={handleAddToCart}
                                     disabled={!inStock}
                                 >
@@ -124,7 +120,7 @@ const ProductCard = ({ product }) => {
                                 </button>
 
                                 <button
-                                    className="btn btn-success btn-small w-50"
+                                    className="btn btn-success btn-small w-50 text-nowrap"
                                     onClick={handleShopNow}
                                     disabled={!inStock}
                                 >

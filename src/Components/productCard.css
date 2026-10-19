@@ -1,4 +1,3 @@
-
 /* Product card look & feel */
 .product-card {
     border-radius: 12px;
@@ -30,68 +29,64 @@
     background: #fff;
 }
 
-@media (min-width: 576px) {
+/* --------------------------------------------------
+   Desktop / tablet: image on top, fixed-height area
+   -------------------------------------------------- */
+@media (min-width: 768px) {
     .product-image {
         height: 190px;
         object-fit: contain;
         padding: 8px;
     }
-}
 
-/* Mobile specific */
-@media (max-width: 576px) {
-    .product-card {
-        border-radius: 8px;
-    }
-
-    .product-image {
-        height: 100px;
-        object-fit: contain;
-    }
-
-    .btn-small {
-        font-size: 11px;
-        padding: 4px 6px;
-    }
-}
-
-@media (max-width: 576px) {
-    .product-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        /* 🔥 fills area completely */
-        display: block;
-    }
-
-    .product-card .col-5 {
-        height: 110px;
-        /* fixed image container height */
-        overflow: hidden;
-        /* crop extra part */
-    }
-}
-
-/* Small phones */
-@media (max-width: 374px) {
-    .btn-small {
-        font-size: 9px;
-        padding: 4px 5px;
-    }
-}
-
-/* Normal phones */
-@media (min-width: 375px) and (max-width: 767px) {
-    .btn-small {
-        font-size: 11px;
-        padding: 5px 7px;
-    }
-}
-
-/* Tablets */
-@media (min-width: 768px) {
     .btn-small {
         font-size: 11px;
         padding: 6px 9px;
+    }
+}
+
+/* --------------------------------------------------
+   Mobile: compact horizontal card (image left)
+   -------------------------------------------------- */
+@media (max-width: 767.98px) {
+    .product-card {
+        border-radius: 14px;
+        border-color: #eef1f3 !important;
+    }
+
+    /* Stretch the image to the full card height */
+    .product-card .row {
+        align-items: stretch !important;
+    }
+
+    .product-card .product-image-wrap {
+        min-height: 132px;
+        overflow: hidden;
+        background: #f8fafb;
+    }
+
+    .product-card .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .product-title {
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+
+    .product-card .badge {
+        font-size: 0.65rem;
+        padding: 0.3em 0.5em;
+    }
+
+    .product-card .btn-small {
+        min-height: 38px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 0.65rem;
+        padding: 0.35rem 0.5rem;
     }
 }

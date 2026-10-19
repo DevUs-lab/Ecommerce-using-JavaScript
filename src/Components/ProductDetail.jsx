@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -23,6 +23,11 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
     const [relatedProducts, setRelatedProducts] = useState([]);
+
+    const actionsRef = useRef(null);
+    // Mobile buy bar: shown while the inline action buttons are off screen,
+    // hidden as soon as they are visible (no duplicated buttons).
+    const [showBuyBar, setShowBuyBar] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -68,6 +73,23 @@ const ProductDetail = () => {
         };
         fetchProduct();
     }, [id]);
+
+    useEffect(() => {
+        if (!product) return undefined;
+
+        const actionsEl = actionsRef.current;
+        if (!actionsEl || typeof IntersectionObserver === "undefined") {
+            setShowBuyBar(true);
+            return undefined;
+        }
+
+        const ctaObserver = new IntersectionObserver(([entry]) => {
+            setShowBuyBar(!entry.isIntersecting);
+        }, { threshold: 0.4 });
+
+        ctaObserver.observe(actionsEl);
+        return () => ctaObserver.disconnect();
+    }, [product]);
 
     const handleAddToCart = () => {
         if (!product) return;
@@ -216,7 +238,7 @@ const ProductDetail = () => {
                 <div className="row">
                     {/* LEFT: IMAGE & GALLERY */}
                     <div className="col-md-6 mb-4">
-                        <div className="border rounded shadow-sm mb-3 d-flex justify-content-center align-items-center bg-white" style={{ minHeight: '400px' }}>
+                        <div className="border rounded shadow-sm mb-3 d-flex justify-content-center align-items-center bg-white product-detail-media">
                             {currentImage ? (
                                 <ImageMagnifier
                                     src={optimizedImageUrl(currentImage, 1200)}
@@ -251,7 +273,7 @@ const ProductDetail = () => {
                     </div>
 
                     {/* RIGHT: DETAILS */}
-                    <div className="col-md-6 text-start">
+                    <div className="col-md-6 text-start product-detail-details">
                         <h1 className="h2 fw-bold">{product.productName}</h1>
 
                         <div className="my-3">
@@ -289,7 +311,7 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Quantity Selector */}
-                        <div className="d-flex align-items-center mb-4">
+                        <div className="d-flex flex-wrap align-items-center mb-4">
                             <span className="me-3 fw-bold">Quantity:</span>
                             <div className="btn-group" role="group">
                                 <button
@@ -316,7 +338,7 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="d-flex flex-wrap gap-3">
+                        <div className="d-flex flex-wrap gap-3" ref={actionsRef}>
                             <button
                                 className="btn btn-primary px-4 py-2"
                                 onClick={handleAddToCart}
@@ -370,6 +392,35 @@ const ProductDetail = () => {
                         </div>
                     </section>
                 )}
+
+                {/* Mobile buy bar — pinned while the product info is off screen */}
+                <div className={`mobile-buy-bar d-md-none ${showBuyBar ? "" : "mobile-buy-bar-hidden"}`}>
+                    <div className="d-flex align-items-center gap-3">
+                        <div className="flex-shrink-0 lh-sm">
+                            <div className="fw-bold fs-5 text-primary">{formatPrice(sellPrice)}</div>
+                            {delPrice > sellPrice && sellPrice > 0 && (
+                                <del className="text-muted small">{formatPrice(delPrice)}</del>
+                            )}
+                        </div>
+                        <div className="d-flex gap-2 flex-grow-1 justify-content-end">
+                            <button
+                                className="btn btn-primary flex-grow-1"
+                                onClick={handleAddToCart}
+                                disabled={!inStock}
+                            >
+                                <i className="fa-solid fa-cart-shopping me-1" aria-hidden="true"></i>
+                                Add to Cart
+                            </button>
+                            <button
+                                className="btn btn-success flex-grow-1"
+                                onClick={handleBuyNow}
+                                disabled={!inStock}
+                            >
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <Footer />
         </>

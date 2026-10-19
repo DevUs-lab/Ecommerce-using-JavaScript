@@ -26,3 +26,62 @@
 .product-detail-image-container:hover .zoom-overlay {
     opacity: 1;
 }
+
+/* Main product media block */
+.product-detail-media {
+    min-height: 400px;
+}
+
+/* ------------------------------------------------------------------
+   Mobile refinements (desktop is untouched)
+   ------------------------------------------------------------------ */
+@media (max-width: 767.98px) {
+    .product-detail-media {
+        min-height: 280px;
+        padding: 8px;
+    }
+
+    .product-detail-details h1 {
+        font-size: 1.45rem;
+    }
+
+    .breadcrumb {
+        font-size: .8rem;
+        --bs-breadcrumb-item-padding-x: .4rem;
+    }
+
+    /* Comfortable tap targets for the quantity stepper */
+    .product-detail-details .btn-group .btn {
+        min-width: 46px;
+        min-height: 46px;
+    }
+}
+
+/* Floating mobile buy dock — fixed to the viewport, shown/hidden via JS */
+.mobile-buy-bar {
+    position: fixed;
+    left: .75rem;
+    right: .75rem;
+    bottom: .75rem;
+    bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
+    z-index: 1030;
+    padding: .65rem .9rem;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, .12);
+    transition: transform .25s ease, opacity .25s ease;
+}
+
+.mobile-buy-bar-hidden {
+    opacity: 0;
+    transform: translateY(140%);
+    pointer-events: none;
+}
+
+.mobile-buy-bar .btn {
+    font-size: .9rem;
+    padding: .55rem .5rem;
+    border-radius: .7rem;
+    white-space: nowrap;
+}

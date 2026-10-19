@@ -124,7 +124,7 @@ const Products = () => {
                             </div>
 
                             {/* Category filter */}
-                            <div className="d-flex flex-wrap justify-content-center gap-2 mb-3">
+                            <div className="chips-row d-flex flex-wrap justify-content-center gap-2 mb-3">
                                 <button
                                     type="button"
                                     className={`btn btn-sm rounded-pill px-3 ${activeCategory === "all" ? "btn-primary" : "btn-outline-secondary"}`}

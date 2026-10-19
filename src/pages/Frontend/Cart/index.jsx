@@ -269,7 +269,7 @@ const Cart = () => {
                 {cartItems.map((item) => (
                     <div
                         key={item.id}
-                        className="card mb-3 shadow-sm border-0 p-3"
+                        className="card mb-3 shadow-sm border-0 p-3 cart-item"
                     >
                         <div className="row align-items-center">
                             {/* Image & Name */}
