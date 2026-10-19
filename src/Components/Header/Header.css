@@ -99,6 +99,30 @@
   }
 }
 
+/* Compact phones: cart button and menu button match in size */
+@media (max-width: 575.98px) {
+  .navbar .btn-dark,
+  .navbar .navbar-toggler {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .navbar .btn-dark {
+    font-size: 1.05rem;
+  }
+
+  /* Tuck the cart count badge into the button corner so it stays
+     clear of the menu button */
+  .navbar .btn-dark .badge {
+    transform: translate(-65%, -30%) !important;
+  }
+}
+
 /* Bottom Navigation */
 .bottom-nav {
   background: #f8f9fa;
