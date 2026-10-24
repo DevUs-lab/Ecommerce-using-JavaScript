@@ -1,5 +1,14 @@
 {
+    "trailingSlash": false,
     "rewrites": [
+        { "source": "/products", "destination": "/products/index.html" },
+        { "source": "/about", "destination": "/about/index.html" },
+        { "source": "/contact", "destination": "/contact/index.html" },
+        { "source": "/faq", "destination": "/faq/index.html" },
+        { "source": "/privacy", "destination": "/privacy/index.html" },
+        { "source": "/terms", "destination": "/terms/index.html" },
+        { "source": "/cart", "destination": "/cart/index.html" },
+        { "source": "/admin-login", "destination": "/admin-login/index.html" },
         {
             "source": "/(.*)",
             "destination": "/index.html"
